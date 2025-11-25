@@ -1,17 +1,18 @@
 import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "firebase/firestore";
 import { User, Prompt } from "../types";
 
+
 // --- PEGA TU CONFIGURACIÓN AQUÍ ---
 const firebaseConfig = {
-  apiKey: "AIzaSyCJ4aZq_7AX98lMEDb-t9UBPrtCG0CHHkI",
-  authDomain: "cofreprompt.firebaseapp.com",
-  projectId: "cofreprompt",
-  storageBucket: "cofreprompt.firebasestorage.app",
-  messagingSenderId: "887253905394",
-  appId: "1:887253905394:web:9a4e38ec6d5b713c23456b",
-  measurementId: "G-2T1P0Y3D2T"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 // Inicializar Firebase
