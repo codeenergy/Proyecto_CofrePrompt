@@ -1,17 +1,23 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import PromptCard from './components/PromptCard';
 import Modal from './components/Modal';
 import CreatePromptModal from './components/CreatePromptModal';
+import UserProfile from './components/UserProfile';
 import Footer from './components/Footer';
 import LegalModal from './components/LegalModal';
 import AdUnit from './components/AdUnit';
 import { Category, Platform, Prompt, User, Comment, Collection, Notification } from './types';
 import { MOCK_PROMPTS } from './constants';
-import { signInWithGoogle } from './services/firebase';
-import { useEffect } from 'react'; // Asegúrate de que useEffect esté en el import de React
-import { getPromptsFromDb, savePromptToDb } from './services/firebase';
+import {
+  signInWithGoogle,
+  onAuthChange,
+  getPromptsFromDb,
+  savePromptToDb,
+  updatePromptInDb,
+  deletePromptFromDb
+} from './services/firebase';
 
 type SortOption = 'DEFAULT' | 'LIKES' | 'NEWEST';
 type LegalView = 'PRIVACY' | 'TERMS' | 'COOKIES' | 'CONTACT';
@@ -69,20 +75,30 @@ function App() {
 
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
+  const [showUserProfile, setShowUserProfile] = useState(false);
   const [legalModalView, setLegalModalView] = useState<LegalView | null>(null);
-     
+
+  // Escuchar cambios en la autenticación para mantener sesión
   useEffect(() => {
-     const loadPrompts = async () => {
-       const dbPrompts = await getPromptsFromDb();
-       if (dbPrompts.length > 0) {
-         setPrompts(dbPrompts);
-       } else {
-         // Fallback a datos de prueba si la DB está vacía
-         setPrompts(MOCK_PROMPTS); 
-       }
-     };
-     loadPrompts();
-   }, []);
+    const unsubscribe = onAuthChange((authUser) => {
+      setUser(authUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Cargar prompts al iniciar
+  useEffect(() => {
+    const loadPrompts = async () => {
+      const dbPrompts = await getPromptsFromDb();
+      if (dbPrompts.length > 0) {
+        setPrompts(dbPrompts);
+      } else {
+        setPrompts(MOCK_PROMPTS);
+      }
+    };
+    loadPrompts();
+  }, []);
   const filteredPrompts = useMemo(() => {
     let result = prompts.filter(prompt => {
       const matchesSearch = prompt.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -111,21 +127,46 @@ function App() {
   };
 
   const handleCreatePrompt = async (newPromptData: Omit<Prompt, 'id' | 'likes' | 'views' | 'createdAt'>) => {
-    const newPrompt: Prompt = {
+    if (!user) return;
+
+    const newPrompt = {
       ...newPromptData,
-      id: Date.now().toString(),
+      authorId: user.uid,
+      author: user.displayName || 'Usuario',
+      authorPhoto: user.photoURL,
       likes: 0,
-      views: 0,
-      createdAt: new Date().toISOString().split('T')[0]
-      
+      views: 0
     };
-           // 1. Guardar en Firebase
-     await savePromptToDb(newPrompt);
-    setPrompts([newPrompt, ...prompts]);   
-     // 2. Recargar la lista (o añadirlo localmente para que sea instantáneo)
-     // Opción rápida: añadirlo al estado local
-     const promptWithTempId = { ...newPrompt, id: Date.now().toString() };
-     setPrompts([promptWithTempId, ...prompts]);
+
+    try {
+      await savePromptToDb(newPrompt);
+      const dbPrompts = await getPromptsFromDb();
+      setPrompts(dbPrompts);
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      console.error("Error al crear el prompt:", error);
+    }
+  };
+
+  const handleUpdatePrompt = async (promptId: string, updates: Partial<Prompt>) => {
+    try {
+      await updatePromptInDb(promptId, updates);
+      const dbPrompts = await getPromptsFromDb();
+      setPrompts(dbPrompts);
+      setEditingPrompt(null);
+    } catch (error) {
+      console.error("Error al actualizar el prompt:", error);
+    }
+  };
+
+  const handleDeletePrompt = async (promptId: string) => {
+    try {
+      await deletePromptFromDb(promptId);
+      const dbPrompts = await getPromptsFromDb();
+      setPrompts(dbPrompts);
+    } catch (error) {
+      console.error("Error al eliminar el prompt:", error);
+    }
   };
 
   const handleOpenCreate = () => {
@@ -195,6 +236,7 @@ function App() {
         setSearchTerm={setSearchTerm}
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         onOpenCreate={handleOpenCreate}
+        onOpenProfile={() => setShowUserProfile(true)}
         notifications={notifications}
         onMarkNotificationAsRead={handleMarkNotificationAsRead}
         onMarkAllNotificationsAsRead={handleMarkAllNotificationsAsRead}
@@ -234,17 +276,20 @@ function App() {
           {filteredPrompts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
-                {filteredPrompts.map((prompt, index) => (
-                  <React.Fragment key={prompt.id}>
-                    <PromptCard prompt={prompt} onOpen={setSelectedPrompt} />
-                    {/* AdSense cada 8 prompts */}
-                    {(index + 1) % 8 === 0 && (
-                      <div className="col-span-full">
-                        <AdUnit slot="0987654321" format="fluid" />
-                      </div>
-                    )}
-                  </React.Fragment>
-                ))}
+                {filteredPrompts.map((prompt, index) => {
+                  const Fragment = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+                  return (
+                    <Fragment key={prompt.id}>
+                      <PromptCard prompt={prompt} onOpen={setSelectedPrompt} />
+                      {/* AdSense cada 8 prompts */}
+                      {(index + 1) % 8 === 0 && (
+                        <div className="col-span-full">
+                          <AdUnit slot="0987654321" format="fluid" />
+                        </div>
+                      )}
+                    </Fragment>
+                  );
+                })}
               </div>
 
               {/* AdSense - Banner Inferior */}
@@ -287,11 +332,33 @@ function App() {
       />
 
       <CreatePromptModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleCreatePrompt}
+        isOpen={isCreateModalOpen || !!editingPrompt}
+        onClose={() => {
+          setIsCreateModalOpen(false);
+          setEditingPrompt(null);
+        }}
+        onSubmit={editingPrompt
+          ? (data) => handleUpdatePrompt(editingPrompt.id, data)
+          : handleCreatePrompt
+        }
         user={user}
+        initialData={editingPrompt || undefined}
       />
+
+      {user && showUserProfile && (
+        <UserProfile
+          user={user}
+          prompts={prompts}
+          isOwnProfile={true}
+          onClose={() => setShowUserProfile(false)}
+          onOpenPrompt={setSelectedPrompt}
+          onEditPrompt={(prompt) => {
+            setEditingPrompt(prompt);
+            setShowUserProfile(false);
+          }}
+          onDeletePrompt={handleDeletePrompt}
+        />
+      )}
 
       <LegalModal
         view={legalModalView}

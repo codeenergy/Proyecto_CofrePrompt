@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Category, Platform, Prompt, User } from '../types';
 import { X, Sparkles, Save, Image as ImageIcon, Upload } from 'lucide-react';
 
@@ -7,9 +7,10 @@ interface CreatePromptModalProps {
   onClose: () => void;
   onSubmit: (prompt: Omit<Prompt, 'id' | 'likes' | 'views' | 'createdAt'>) => void;
   user: User | null;
+  initialData?: Prompt;
 }
 
-const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, onSubmit, user }) => {
+const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, onSubmit, user, initialData }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -22,6 +23,36 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
   const [imageMode, setImageMode] = useState<'url' | 'upload'>('url');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Cargar datos iniciales si estamos editando
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        title: initialData.title,
+        description: initialData.description,
+        content: initialData.content,
+        imageUrl: initialData.imageUrl,
+        platform: initialData.platform,
+        category: initialData.category,
+        tags: initialData.tags.join(', ')
+      });
+      if (initialData.imageUrl) {
+        setImagePreview(initialData.imageUrl);
+      }
+    } else {
+      // Resetear formulario al crear nuevo
+      setFormData({
+        title: '',
+        description: '',
+        content: '',
+        imageUrl: '',
+        platform: Platform.ChatGPT,
+        category: Category.General,
+        tags: ''
+      });
+      setImagePreview(null);
+    }
+  }, [initialData, isOpen]);
 
   if (!isOpen) return null;
 
@@ -51,10 +82,14 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
+
     onSubmit({
       ...formData,
       imageUrl: formData.imageUrl || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800',
-      author: user?.displayName || 'Anónimo',
+      author: user.displayName || 'Anónimo',
+      authorId: user.uid,
+      authorPhoto: user.photoURL,
       tags: formData.tags.split(',').map(t => t.trim()).filter(t => t.length > 0)
     });
     onClose();
@@ -95,7 +130,9 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
             <div className="p-2 bg-primary/10 rounded-lg text-primary">
               <Sparkles size={20} />
             </div>
-            <h2 className="text-lg font-bold text-white">Publicar Nuevo Prompt</h2>
+            <h2 className="text-lg font-bold text-white">
+              {initialData ? 'Editar Prompt' : 'Publicar Nuevo Prompt'}
+            </h2>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
             <X size={24} />

@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, Timestamp } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, doc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
 import { User, Prompt } from "../types";
 
 // Configuración de Firebase
@@ -96,7 +96,8 @@ export const getPromptsFromDb = async (): Promise<Prompt[]> => {
         id: doc.id,
         ...data,
         // Convertir Timestamp a string ISO para compatibilidad
-        createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
+        createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+        updatedAt: data.updatedAt?.toDate?.()?.toISOString()
       } as Prompt);
     });
 
@@ -104,5 +105,88 @@ export const getPromptsFromDb = async (): Promise<Prompt[]> => {
   } catch (e) {
     console.error("Error obteniendo documentos: ", e);
     return [];
+  }
+};
+
+// Obtener prompts de un usuario específico
+export const getUserPromptsFromDb = async (userId: string): Promise<Prompt[]> => {
+  try {
+    const q = query(
+      collection(db, "prompts"),
+      where("authorId", "==", userId),
+      orderBy("createdAt", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+
+    const prompts: Prompt[] = [];
+    querySnapshot.forEach((docSnapshot) => {
+      const data = docSnapshot.data();
+      prompts.push({
+        id: docSnapshot.id,
+        ...data,
+        createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+        updatedAt: data.updatedAt?.toDate?.()?.toISOString()
+      } as Prompt);
+    });
+
+    return prompts;
+  } catch (e) {
+    console.error("Error obteniendo prompts del usuario: ", e);
+    return [];
+  }
+};
+
+// Actualizar un prompt
+export const updatePromptInDb = async (promptId: string, updates: Partial<Prompt>) => {
+  try {
+    const promptRef = doc(db, "prompts", promptId);
+    const updateData = {
+      ...updates,
+      updatedAt: Timestamp.now()
+    };
+    await updateDoc(promptRef, updateData);
+    console.log("Prompt actualizado con ID: ", promptId);
+    return true;
+  } catch (e) {
+    console.error("Error actualizando documento: ", e);
+    throw e;
+  }
+};
+
+// Eliminar un prompt
+export const deletePromptFromDb = async (promptId: string) => {
+  try {
+    const promptRef = doc(db, "prompts", promptId);
+    await deleteDoc(promptRef);
+    console.log("Prompt eliminado con ID: ", promptId);
+    return true;
+  } catch (e) {
+    console.error("Error eliminando documento: ", e);
+    throw e;
+  }
+};
+
+// Incrementar likes de un prompt
+export const toggleLikePrompt = async (promptId: string, currentLikes: number, isLiked: boolean) => {
+  try {
+    const promptRef = doc(db, "prompts", promptId);
+    const newLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
+    await updateDoc(promptRef, { likes: newLikes });
+    return newLikes;
+  } catch (e) {
+    console.error("Error actualizando likes: ", e);
+    throw e;
+  }
+};
+
+// Incrementar vistas de un prompt
+export const incrementPromptViews = async (promptId: string, currentViews: number) => {
+  try {
+    const promptRef = doc(db, "prompts", promptId);
+    await updateDoc(promptRef, { views: currentViews + 1 });
+    return currentViews + 1;
+  } catch (e) {
+    console.error("Error incrementando vistas: ", e);
+    throw e;
   }
 };

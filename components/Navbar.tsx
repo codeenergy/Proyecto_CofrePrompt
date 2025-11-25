@@ -12,6 +12,7 @@ interface NavbarProps {
   setSearchTerm: (term: string) => void;
   toggleSidebar: () => void;
   onOpenCreate: () => void;
+  onOpenProfile?: () => void;
   notifications?: Notification[];
   onMarkNotificationAsRead?: (id: string) => void;
   onMarkAllNotificationsAsRead?: () => void;
@@ -25,6 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({
   setSearchTerm,
   toggleSidebar,
   onOpenCreate,
+  onOpenProfile,
   notifications = [],
   onMarkNotificationAsRead = () => {},
   onMarkAllNotificationsAsRead = () => {},
@@ -104,11 +106,17 @@ const Navbar: React.FC<NavbarProps> = ({
           {/* Auth */}
           {user ? (
             <div className="flex items-center gap-2">
-              <img
-                src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || 'User')}&background=6366f1&color=fff`}
-                alt={user.displayName || 'User'}
-                className="h-8 w-8 rounded-full border border-slate-700"
-              />
+              <button
+                onClick={onOpenProfile}
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                title="Ver perfil"
+              >
+                <img
+                  src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || 'User')}&background=6366f1&color=fff`}
+                  alt={user.displayName || 'User'}
+                  className="h-8 w-8 rounded-full border border-slate-700"
+                />
+              </button>
               <button
                 onClick={handleLogout}
                 className="p-2 text-slate-400 hover:text-red-400 transition-colors"

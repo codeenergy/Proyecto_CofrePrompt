@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { X, Heart, BookMarked, Users, Calendar, Edit2 } from 'lucide-react';
-import { User, Prompt, Collection } from '../types';
+import { useState } from 'react';
+import { X, Heart, BookMarked, Users, Edit2, Trash2, Eye } from 'lucide-react';
+import { User, Prompt } from '../types';
 import PromptCard from './PromptCard';
 
 interface UserProfileProps {
@@ -10,6 +10,9 @@ interface UserProfileProps {
   onClose: () => void;
   onEditProfile?: () => void;
   onFollowToggle?: () => void;
+  onOpenPrompt?: (prompt: Prompt) => void;
+  onEditPrompt?: (prompt: Prompt) => void;
+  onDeletePrompt?: (promptId: string) => void;
 }
 
 export default function UserProfile({
@@ -18,13 +21,25 @@ export default function UserProfile({
   isOwnProfile,
   onClose,
   onEditProfile,
-  onFollowToggle
+  onFollowToggle,
+  onOpenPrompt,
+  onEditPrompt,
+  onDeletePrompt
 }: UserProfileProps) {
   const [activeTab, setActiveTab] = useState<'prompts' | 'favorites' | 'collections'>('prompts');
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
-  const userPrompts = prompts.filter(p => p.author === user.displayName);
+  const userPrompts = prompts.filter(p => p.authorId === user.uid);
   const favoritePrompts = prompts.filter(p => user.favoritePrompts?.includes(p.id));
   const totalLikes = userPrompts.reduce((sum, p) => sum + p.likes, 0);
+  const totalViews = userPrompts.reduce((sum, p) => sum + p.views, 0);
+
+  const handleDeleteConfirm = (promptId: string) => {
+    if (onDeletePrompt) {
+      onDeletePrompt(promptId);
+      setConfirmDelete(null);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -79,6 +94,10 @@ export default function UserProfile({
                 <span className="text-slate-400 ml-1">Likes</span>
               </div>
               <div>
+                <span className="text-white font-bold">{totalViews}</span>
+                <span className="text-slate-400 ml-1">Vistas</span>
+              </div>
+              <div>
                 <span className="text-white font-bold">{user.followers?.length || 0}</span>
                 <span className="text-slate-400 ml-1">Seguidores</span>
               </div>
@@ -130,14 +149,75 @@ export default function UserProfile({
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           {activeTab === 'prompts' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="space-y-3">
               {userPrompts.length > 0 ? (
                 userPrompts.map((prompt) => (
-                  <PromptCard key={prompt.id} prompt={prompt} onOpen={() => {}} />
+                  <div key={prompt.id} className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 hover:border-indigo-500/50 transition-colors">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0 cursor-pointer" onClick={() => onOpenPrompt?.(prompt)}>
+                        <h3 className="font-medium text-white truncate">{prompt.title}</h3>
+                        <p className="text-sm text-slate-400 mt-1 line-clamp-2">{prompt.description}</p>
+                        <div className="flex items-center gap-4 mt-3 text-xs text-slate-500">
+                          <span className="flex items-center gap-1">
+                            <Heart className="w-3 h-3" />
+                            {prompt.likes}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Eye className="w-3 h-3" />
+                            {prompt.views}
+                          </span>
+                          <span>•</span>
+                          <span>{new Date(prompt.createdAt).toLocaleDateString()}</span>
+                          {prompt.updatedAt && (
+                            <>
+                              <span>•</span>
+                              <span>Editado {new Date(prompt.updatedAt).toLocaleDateString()}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {isOwnProfile && (
+                        <div className="flex items-center gap-2 ml-4">
+                          <button
+                            onClick={() => onEditPrompt?.(prompt)}
+                            className="p-2 text-slate-400 hover:text-indigo-400 hover:bg-slate-700 rounded-lg transition-colors"
+                            title="Editar prompt"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          {confirmDelete === prompt.id ? (
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleDeleteConfirm(prompt.id)}
+                                className="px-3 py-1 text-xs bg-red-500 hover:bg-red-600 text-white rounded transition-colors"
+                              >
+                                Confirmar
+                              </button>
+                              <button
+                                onClick={() => setConfirmDelete(null)}
+                                className="px-3 py-1 text-xs bg-slate-600 hover:bg-slate-500 text-white rounded transition-colors"
+                              >
+                                Cancelar
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setConfirmDelete(prompt.id)}
+                              className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-lg transition-colors"
+                              title="Eliminar prompt"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 ))
               ) : (
-                <div className="col-span-full text-center py-12 text-slate-400">
-                  No hay prompts aún
+                <div className="text-center py-12 text-slate-400">
+                  {isOwnProfile ? 'No has creado prompts aún' : 'No hay prompts aún'}
                 </div>
               )}
             </div>

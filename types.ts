@@ -25,10 +25,13 @@ export interface Prompt {
   platform: Platform;
   category: Category;
   author: string;
+  authorId: string; // ID del usuario que creó el prompt
+  authorPhoto?: string | null; // Foto del autor
   likes: number;
   views: number;
   tags: string[];
   createdAt: string;
+  updatedAt?: string; // Fecha de última modificación
 }
 
 export interface User {
