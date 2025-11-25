@@ -1,0 +1,96 @@
+import { Category, Platform, Prompt } from './types';
+
+export const MOCK_PROMPTS: Prompt[] = [
+  {
+    id: '1',
+    title: 'Asistente de Python Experto',
+    description: 'Un prompt para convertir a la IA en un desarrollador Senior de Python.',
+    content: 'Actúa como un desarrollador Senior de Python. Analiza el siguiente código buscando errores, ineficiencias y vulnerabilidades de seguridad. Proporciona una versión refactorizada y explica los cambios: [INSERTAR CÓDIGO]',
+    imageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800',
+    platform: Platform.ChatGPT,
+    category: Category.Coding,
+    author: 'CodeMaster',
+    likes: 1240,
+    views: 5300,
+    tags: ['python', 'coding', 'debug'],
+    createdAt: '2023-10-15'
+  },
+  {
+    id: '2',
+    title: 'Fotografía Realista de Retrato',
+    description: 'Prompt de Midjourney para retratos cinematográficos 8k.',
+    content: '/imagine prompt: extreme close-up portrait of a futuristic cyberpunk warrior, neon lighting, cinematic depth of field, 8k resolution, unreal engine 5 render, hyper-realistic --ar 16:9 --v 5.2',
+    imageUrl: 'https://images.unsplash.com/photo-1615751072497-5f5169febe33?auto=format&fit=crop&q=80&w=800',
+    platform: Platform.Midjourney,
+    category: Category.Design,
+    author: 'VisualArtistry',
+    likes: 890,
+    views: 4100,
+    tags: ['midjourney', 'art', 'cyberpunk'],
+    createdAt: '2023-11-02'
+  },
+  {
+    id: '3',
+    title: 'Estratega de Marketing Digital',
+    description: 'Crea planes de marketing completos para lanzamientos de productos.',
+    content: 'Eres un experto en marketing digital con 10 años de experiencia. Crea una estrategia de lanzamiento de 4 semanas para un nuevo SaaS de gestión de tiempo. Incluye calendario de contenidos para LinkedIn y Twitter, y estructura de email marketing.',
+    imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800',
+    platform: Platform.Claude,
+    category: Category.Marketing,
+    author: 'GrowthHacker',
+    likes: 650,
+    views: 2200,
+    tags: ['marketing', 'strategy', 'business'],
+    createdAt: '2023-12-10'
+  },
+  {
+    id: '4',
+    title: 'Traductor Universal con Matices',
+    description: 'Traducción que conserva el tono y la intención cultural.',
+    content: 'Traduce el siguiente texto del inglés al español. No traduzcas literalmente; adapta las expresiones idiomáticas para que suenen naturales para un hablante nativo de España. Mantén un tono profesional pero cercano.',
+    imageUrl: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=800',
+    platform: Platform.ChatGPT,
+    category: Category.Writing,
+    author: 'Polyglot',
+    likes: 420,
+    views: 1500,
+    tags: ['translation', 'spanish', 'language'],
+    createdAt: '2024-01-05'
+  },
+  {
+    id: '5',
+    title: 'Analista de Datos Financieros',
+    description: 'Interpretación de balances y estados de resultados.',
+    content: 'Analiza los siguientes datos financieros proporcionados en formato CSV. Identifica tendencias clave, calcula el margen de beneficio neto y sugiera 3 áreas de reducción de costos.',
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800',
+    platform: Platform.Gemini,
+    category: Category.Business,
+    author: 'FinTechPro',
+    likes: 310,
+    views: 1200,
+    tags: ['finance', 'data', 'analysis'],
+    createdAt: '2024-01-20'
+  },
+  {
+    id: '6',
+    title: 'Generador de Logos Minimalistas',
+    description: 'Prompt para DALL-E 3 o Midjourney.',
+    content: 'Logo minimalista vectorial de un zorro geométrico, diseño plano, colores naranja y blanco, fondo azul oscuro sólido, estilo tech startup moderna.',
+    imageUrl: 'https://images.unsplash.com/photo-1626785774573-4b799314346d?auto=format&fit=crop&q=80&w=800',
+    platform: Platform.StableDiffusion,
+    category: Category.Design,
+    author: 'DesignGod',
+    likes: 1500,
+    views: 8000,
+    tags: ['logo', 'vector', 'minimalist'],
+    createdAt: '2024-02-01'
+  }
+];
+
+export const PLATFORM_COLORS: Record<Platform, string> = {
+  [Platform.ChatGPT]: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  [Platform.Midjourney]: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+  [Platform.Claude]: 'bg-orange-500/20 text-orange-300 border-orange-500/30',
+  [Platform.StableDiffusion]: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+  [Platform.Gemini]: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
+};
