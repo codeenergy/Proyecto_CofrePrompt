@@ -57,7 +57,7 @@ const MOCK_NOTIFICATIONS: Notification[] = [
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [prompts, setPrompts] = useState<Prompt[]>(MOCK_PROMPTS);
+  const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
@@ -70,7 +70,19 @@ function App() {
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [legalModalView, setLegalModalView] = useState<LegalView | null>(null);
-
+     
+  useEffect(() => {
+     const loadPrompts = async () => {
+       const dbPrompts = await getPromptsFromDb();
+       if (dbPrompts.length > 0) {
+         setPrompts(dbPrompts);
+       } else {
+         // Fallback a datos de prueba si la DB está vacía
+         setPrompts(MOCK_PROMPTS); 
+       }
+     };
+     loadPrompts();
+   }, []);
   const filteredPrompts = useMemo(() => {
     let result = prompts.filter(prompt => {
       const matchesSearch = prompt.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -98,15 +110,22 @@ function App() {
     }
   };
 
-  const handleCreatePrompt = (newPromptData: Omit<Prompt, 'id' | 'likes' | 'views' | 'createdAt'>) => {
+  const handleCreatePrompt = async (newPromptData: Omit<Prompt, 'id' | 'likes' | 'views' | 'createdAt'>) => {
     const newPrompt: Prompt = {
       ...newPromptData,
       id: Date.now().toString(),
       likes: 0,
       views: 0,
       createdAt: new Date().toISOString().split('T')[0]
+      
     };
-    setPrompts([newPrompt, ...prompts]);
+           // 1. Guardar en Firebase
+     await savePromptToDb(newPrompt);
+    setPrompts([newPrompt, ...prompts]);   
+     // 2. Recargar la lista (o añadirlo localmente para que sea instantáneo)
+     // Opción rápida: añadirlo al estado local
+     const promptWithTempId = { ...newPrompt, id: Date.now().toString() };
+     setPrompts([promptWithTempId, ...prompts]);
   };
 
   const handleOpenCreate = () => {
