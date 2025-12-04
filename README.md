@@ -4,11 +4,25 @@
 
 Una plataforma moderna y completa para descubrir, crear y compartir prompts de IA premium.
 
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)
+
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tu-usuario/cofreprompt)
 
-[Demo en vivo](https://cofreprompt.vercel.app) · [Reportar Bug](https://github.com/tu-usuario/cofreprompt/issues) · [Solicitar Feature](https://github.com/tu-usuario/cofreprompt/issues)
+[Demo en vivo](https://cofreprompt.vercel.app) · [Reportar Bug](https://github.com/tu-usuario/cofreprompt/issues) · [Solicitar Feature](https://github.com/tu-usuario/cofreprompt/issues) · [📚 Documentación](docs/)
 
 </div>
+
+---
+
+## 📖 Documentación
+
+- 📘 **[Guía de Inicio Rápido](docs/QUICKSTART.md)** - Comienza en 5 minutos
+- 🚀 **[Guía de Deploy](docs/DEPLOY.md)** - Deploy a Vercel paso a paso
+- 🔧 **[Configuración Firebase](docs/SETUP_FIREBASE.md)** - Setup de autenticación
+- 🐛 **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Solución de problemas
+- 📚 **[Documentación Completa](docs/)** - Todas las guías
 
 ---
 

@@ -2,13 +2,28 @@
   "name": "cofreprompt",
   "private": true,
   "version": "1.0.0",
+  "description": "Plataforma moderna para compartir y descubrir prompts de IA",
+  "author": "CofrePrompt Team",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules/.vite",
+    "deploy": "vercel --prod"
   },
+  "keywords": [
+    "ai",
+    "prompts",
+    "chatgpt",
+    "claude",
+    "midjourney",
+    "react",
+    "firebase",
+    "typescript"
+  ],
   "dependencies": {
     "firebase": "^12.6.0",
     "lucide-react": "^0.554.0",
