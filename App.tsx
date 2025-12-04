@@ -8,6 +8,9 @@ import UserProfile from './components/UserProfile';
 import Footer from './components/Footer';
 import LegalModal from './components/LegalModal';
 import AdUnit from './components/AdUnit';
+import Toast, { ToastType } from './components/Toast';
+import LoadingSpinner from './components/LoadingSpinner';
+import SkeletonCard from './components/SkeletonCard';
 import { Category, Platform, Prompt, User, Comment, Collection, Notification } from './types';
 import { MOCK_PROMPTS } from './constants';
 import {
@@ -60,6 +63,12 @@ const MOCK_NOTIFICATIONS: Notification[] = [
   }
 ];
 
+interface ToastMessage {
+  id: string;
+  message: string;
+  type: ToastType;
+}
+
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -67,6 +76,8 @@ function App() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
+  const [isLoadingPrompts, setIsLoadingPrompts] = useState(true);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category>(Category.All);
@@ -87,14 +98,35 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  // Helper para mostrar toasts
+  const showToast = (message: string, type: ToastType) => {
+    const id = Date.now().toString();
+    setToasts(prev => [...prev, { id, message, type }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
   // Cargar prompts al iniciar
   useEffect(() => {
     const loadPrompts = async () => {
-      const dbPrompts = await getPromptsFromDb();
-      if (dbPrompts.length > 0) {
-        setPrompts(dbPrompts);
-      } else {
+      setIsLoadingPrompts(true);
+      try {
+        const dbPrompts = await getPromptsFromDb();
+        if (dbPrompts.length > 0) {
+          setPrompts(dbPrompts);
+          showToast(`${dbPrompts.length} prompts cargados exitosamente`, 'success');
+        } else {
+          setPrompts(MOCK_PROMPTS);
+          showToast('Mostrando prompts de ejemplo', 'info');
+        }
+      } catch (error) {
+        console.error('Error al cargar prompts:', error);
         setPrompts(MOCK_PROMPTS);
+        showToast('Error al cargar prompts. Mostrando ejemplos', 'warning');
+      } finally {
+        setIsLoadingPrompts(false);
       }
     };
     loadPrompts();
@@ -121,8 +153,10 @@ function App() {
     try {
       const loggedInUser = await signInWithGoogle();
       setUser(loggedInUser);
+      showToast(`¡Bienvenido ${loggedInUser.displayName}!`, 'success');
     } catch (error) {
       console.error("Login failed", error);
+      showToast('Error al iniciar sesión. Intenta nuevamente', 'error');
     }
   };
 
@@ -139,33 +173,42 @@ function App() {
     };
 
     try {
+      showToast('Guardando prompt...', 'info');
       await savePromptToDb(newPrompt);
       const dbPrompts = await getPromptsFromDb();
       setPrompts(dbPrompts);
       setIsCreateModalOpen(false);
+      showToast('¡Prompt publicado exitosamente!', 'success');
     } catch (error) {
       console.error("Error al crear el prompt:", error);
+      showToast('Error al publicar el prompt. Intenta nuevamente', 'error');
     }
   };
 
   const handleUpdatePrompt = async (promptId: string, updates: Partial<Prompt>) => {
     try {
+      showToast('Actualizando prompt...', 'info');
       await updatePromptInDb(promptId, updates);
       const dbPrompts = await getPromptsFromDb();
       setPrompts(dbPrompts);
       setEditingPrompt(null);
+      showToast('Prompt actualizado exitosamente', 'success');
     } catch (error) {
       console.error("Error al actualizar el prompt:", error);
+      showToast('Error al actualizar el prompt', 'error');
     }
   };
 
   const handleDeletePrompt = async (promptId: string) => {
     try {
+      showToast('Eliminando prompt...', 'info');
       await deletePromptFromDb(promptId);
       const dbPrompts = await getPromptsFromDb();
       setPrompts(dbPrompts);
+      showToast('Prompt eliminado exitosamente', 'success');
     } catch (error) {
       console.error("Error al eliminar el prompt:", error);
+      showToast('Error al eliminar el prompt', 'error');
     }
   };
 
@@ -273,14 +316,24 @@ function App() {
           </div>
 
           {/* Grid */}
-          {filteredPrompts.length > 0 ? (
+          {isLoadingPrompts ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          ) : filteredPrompts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
                 {filteredPrompts.map((prompt, index) => {
                   const Fragment = ({ children }: { children: React.ReactNode }) => <>{children}</>;
                   return (
                     <Fragment key={prompt.id}>
-                      <PromptCard prompt={prompt} onOpen={setSelectedPrompt} />
+                      <PromptCard
+                        prompt={prompt}
+                        onOpen={setSelectedPrompt}
+                        onCopy={() => showToast('Prompt copiado al portapapeles', 'success')}
+                      />
                       {/* AdSense cada 8 prompts */}
                       {(index + 1) % 8 === 0 && (
                         <div className="col-span-full">
@@ -297,10 +350,11 @@ function App() {
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mb-3">
-                <span className="text-xl">🔍</span>
+              <div className="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full flex items-center justify-center mb-4 animate-pulse">
+                <span className="text-3xl">🔍</span>
               </div>
-              <p className="text-sm text-slate-400 mb-3">No se encontraron prompts</p>
+              <p className="text-base font-medium text-slate-300 mb-2">No se encontraron prompts</p>
+              <p className="text-sm text-slate-500 mb-4">Intenta ajustar los filtros o buscar algo diferente</p>
               <button
                 onClick={() => {
                   setSelectedCategory(Category.All);
@@ -308,7 +362,7 @@ function App() {
                   setSearchTerm('');
                   setSortOption('DEFAULT');
                 }}
-                className="text-xs text-indigo-400 hover:underline"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-all hover:scale-105"
               >
                 Limpiar filtros
               </button>
@@ -329,6 +383,7 @@ function App() {
         onAddComment={handleAddComment}
         onLikeComment={handleLikeComment}
         onToggleFavorite={handleToggleFavorite}
+        onCopySuccess={() => showToast('Prompt copiado al portapapeles', 'success')}
       />
 
       <CreatePromptModal
@@ -364,6 +419,18 @@ function App() {
         view={legalModalView}
         onClose={() => setLegalModalView(null)}
       />
+
+      {/* Toast Notifications */}
+      <div className="fixed top-20 right-4 z-[60] space-y-2">
+        {toasts.map(toast => (
+          <Toast
+            key={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onClose={() => removeToast(toast.id)}
+          />
+        ))}
+      </div>
     </div>
   );
 }

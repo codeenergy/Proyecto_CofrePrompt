@@ -190,3 +190,82 @@ export const incrementPromptViews = async (promptId: string, currentViews: numbe
     throw e;
   }
 };
+
+// --- GESTIÓN DE USUARIOS ---
+
+// Guardar/actualizar datos de usuario
+export const saveUserData = async (userId: string, userData: Partial<User>) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, userData);
+    console.log("Datos de usuario actualizados");
+    return true;
+  } catch (e) {
+    // Si el documento no existe, crearlo
+    try {
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, {
+        ...userData,
+        createdAt: Timestamp.now()
+      });
+      return true;
+    } catch (error) {
+      console.error("Error guardando datos de usuario: ", error);
+      throw error;
+    }
+  }
+};
+
+// Obtener datos de usuario
+export const getUserData = async (userId: string): Promise<User | null> => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDocs(query(collection(db, "users"), where("uid", "==", userId)));
+
+    if (userSnap.empty) {
+      return null;
+    }
+
+    const userData = userSnap.docs[0].data();
+    return userData as User;
+  } catch (e) {
+    console.error("Error obteniendo datos de usuario: ", e);
+    return null;
+  }
+};
+
+// Agregar prompt a favoritos
+export const addToFavorites = async (userId: string, promptId: string) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userData = await getUserData(userId);
+
+    const currentFavorites = userData?.favoritePrompts || [];
+    if (!currentFavorites.includes(promptId)) {
+      await updateDoc(userRef, {
+        favoritePrompts: [...currentFavorites, promptId]
+      });
+    }
+    return true;
+  } catch (e) {
+    console.error("Error agregando a favoritos: ", e);
+    throw e;
+  }
+};
+
+// Eliminar prompt de favoritos
+export const removeFromFavorites = async (userId: string, promptId: string) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userData = await getUserData(userId);
+
+    const currentFavorites = userData?.favoritePrompts || [];
+    await updateDoc(userRef, {
+      favoritePrompts: currentFavorites.filter(id => id !== promptId)
+    });
+    return true;
+  } catch (e) {
+    console.error("Error eliminando de favoritos: ", e);
+    throw e;
+  }
+};

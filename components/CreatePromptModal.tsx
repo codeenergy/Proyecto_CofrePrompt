@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Category, Platform, Prompt, User } from '../types';
-import { X, Sparkles, Save, Image as ImageIcon, Upload } from 'lucide-react';
+import { X, Sparkles, Save, Image as ImageIcon, Upload, AlertCircle, Check } from 'lucide-react';
 
 interface CreatePromptModalProps {
   isOpen: boolean;
@@ -17,11 +17,15 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
     content: '',
     imageUrl: '',
     platform: Platform.ChatGPT,
+    customPlatform: '',
     category: Category.General,
     tags: ''
   });
   const [imageMode, setImageMode] = useState<'url' | 'upload'>('url');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [useCustomPlatform, setUseCustomPlatform] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Cargar datos iniciales si estamos editando
@@ -33,6 +37,7 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
         content: initialData.content,
         imageUrl: initialData.imageUrl,
         platform: initialData.platform,
+        customPlatform: '',
         category: initialData.category,
         tags: initialData.tags.join(', ')
       });
@@ -47,10 +52,12 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
         content: '',
         imageUrl: '',
         platform: Platform.ChatGPT,
+        customPlatform: '',
         category: Category.General,
         tags: ''
       });
       setImagePreview(null);
+      setErrors({});
     }
   }, [initialData, isOpen]);
 
@@ -61,12 +68,12 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
     if (file) {
       // Validar tipo de archivo
       if (!file.type.startsWith('image/')) {
-        alert('Por favor selecciona un archivo de imagen');
+        setErrors({...errors, imageUrl: 'Por favor selecciona un archivo de imagen válido'});
         return;
       }
       // Validar tamaño (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('La imagen no debe superar los 5MB');
+        setErrors({...errors, imageUrl: 'La imagen no debe superar los 5MB'});
         return;
       }
       // Crear preview con base64
@@ -75,36 +82,109 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
         const base64 = reader.result as string;
         setImagePreview(base64);
         setFormData({ ...formData, imageUrl: base64 });
+        setErrors({...errors, imageUrl: ''});
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
 
-    onSubmit({
-      ...formData,
-      imageUrl: formData.imageUrl || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800',
-      author: user.displayName || 'Anónimo',
-      authorId: user.uid,
-      authorPhoto: user.photoURL,
-      tags: formData.tags.split(',').map(t => t.trim()).filter(t => t.length > 0)
-    });
-    onClose();
-    // Reset form
-    setFormData({
-      title: '',
-      description: '',
-      content: '',
-      imageUrl: '',
-      platform: Platform.ChatGPT,
-      category: Category.General,
-      tags: ''
-    });
-    setImagePreview(null);
-    setImageMode('url');
+    // Validar título (mínimo 10 caracteres)
+    if (!formData.title.trim()) {
+      newErrors.title = 'El título es obligatorio';
+    } else if (formData.title.trim().length < 10) {
+      newErrors.title = 'El título debe tener al menos 10 caracteres';
+    } else if (formData.title.trim().length > 100) {
+      newErrors.title = 'El título no puede exceder 100 caracteres';
+    }
+
+    // Validar descripción (mínimo 20 caracteres)
+    if (!formData.description.trim()) {
+      newErrors.description = 'La descripción es obligatoria';
+    } else if (formData.description.trim().length < 20) {
+      newErrors.description = 'La descripción debe tener al menos 20 caracteres';
+    } else if (formData.description.trim().length > 200) {
+      newErrors.description = 'La descripción no puede exceder 200 caracteres';
+    }
+
+    // Validar contenido del prompt (mínimo 50 caracteres, máximo 5000)
+    if (!formData.content.trim()) {
+      newErrors.content = 'El contenido del prompt es obligatorio';
+    } else if (formData.content.trim().length < 50) {
+      newErrors.content = 'El prompt debe tener al menos 50 caracteres para ser útil';
+    } else if (formData.content.trim().length > 5000) {
+      newErrors.content = 'El prompt no puede exceder 5000 caracteres';
+    }
+
+    // Validar imagen
+    if (!formData.imageUrl.trim() && !imagePreview) {
+      newErrors.imageUrl = 'Debes agregar una imagen o URL de imagen';
+    }
+
+    // Validar etiquetas (mínimo 3)
+    const tags = formData.tags.split(',').map(t => t.trim()).filter(t => t.length > 0);
+    if (tags.length < 3) {
+      newErrors.tags = 'Debes agregar al menos 3 etiquetas separadas por comas';
+    } else if (tags.length > 10) {
+      newErrors.tags = 'No puedes agregar más de 10 etiquetas';
+    }
+
+    // Validar plataforma personalizada si está activada
+    if (useCustomPlatform && !formData.customPlatform.trim()) {
+      newErrors.customPlatform = 'Debes especificar el nombre de la plataforma';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || isSubmitting) return;
+
+    // Validar formulario
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const finalPlatform = useCustomPlatform && formData.customPlatform
+        ? formData.customPlatform
+        : formData.platform;
+
+      await onSubmit({
+        ...formData,
+        platform: finalPlatform as Platform,
+        imageUrl: formData.imageUrl || imagePreview || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800',
+        author: user.displayName || 'Anónimo',
+        authorId: user.uid,
+        authorPhoto: user.photoURL,
+        tags: formData.tags.split(',').map(t => t.trim()).filter(t => t.length > 0)
+      });
+
+      setErrors({});
+      setFormData({
+        title: '',
+        description: '',
+        content: '',
+        imageUrl: '',
+        platform: Platform.ChatGPT,
+        customPlatform: '',
+        category: Category.General,
+        tags: ''
+      });
+      setImagePreview(null);
+      onClose();
+    } catch (error) {
+      console.error('Error al guardar:', error);
+      setErrors({submit: 'Hubo un error al guardar el prompt. Por favor intenta de nuevo.'});
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const clearImage = () => {
@@ -115,63 +195,130 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
     }
   };
 
+  const getCharacterCount = (text: string, min: number, max: number) => {
+    const count = text.length;
+    const isValid = count >= min && count <= max;
+    const color = count < min ? 'text-red-400' : isValid ? 'text-green-400' : 'text-red-400';
+    return (
+      <span className={`text-xs ${color}`}>
+        {count}/{max} caracteres {!isValid && count < min && `(mínimo ${min})`}
+      </span>
+    );
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
       <div
         className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
-      <div className="relative bg-surface border border-slate-700 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200 max-h-[90vh]">
+      <div className="relative bg-slate-900 border border-slate-700 w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh] animate-in zoom-in duration-200">
 
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-slate-900/50">
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-primary/10 rounded-lg text-primary">
+        <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-gradient-to-r from-indigo-600/10 to-purple-600/10">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-indigo-500/20 rounded-lg text-indigo-400">
               <Sparkles size={20} />
             </div>
-            <h2 className="text-lg font-bold text-white">
-              {initialData ? 'Editar Prompt' : 'Publicar Nuevo Prompt'}
-            </h2>
+            <div>
+              <h2 className="text-lg font-bold text-white">
+                {initialData ? 'Editar Prompt' : 'Publicar Nuevo Prompt'}
+              </h2>
+              <p className="text-xs text-slate-400">Completa todos los campos obligatorios</p>
+            </div>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-white transition-colors p-2 hover:bg-slate-800 rounded-lg"
+          >
             <X size={24} />
           </button>
         </div>
 
         {/* Form */}
-        <div className="p-6 overflow-y-auto custom-scrollbar">
+        <div className="p-6 overflow-y-auto custom-scrollbar space-y-6">
           <form id="create-prompt-form" onSubmit={handleSubmit} className="space-y-5">
 
+            {/* Título */}
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Título del Prompt</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Título del Prompt <span className="text-red-400">*</span>
+              </label>
               <input
-                required
                 type="text"
-                placeholder="Ej: Experto en Marketing Digital..."
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                placeholder="Ej: Experto en Marketing Digital para Redes Sociales..."
+                className={`w-full bg-slate-800 border ${errors.title ? 'border-red-500' : 'border-slate-700'} rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all`}
                 value={formData.title}
                 onChange={e => setFormData({...formData, title: e.target.value})}
               />
+              <div className="flex justify-between items-center mt-1">
+                {errors.title && (
+                  <span className="text-xs text-red-400 flex items-center gap-1">
+                    <AlertCircle size={12} /> {errors.title}
+                  </span>
+                )}
+                <div className="ml-auto">
+                  {getCharacterCount(formData.title, 10, 100)}
+                </div>
+              </div>
             </div>
 
+            {/* Plataforma y Categoría */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">Plataforma</label>
-                <select
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all appearance-none"
-                  value={formData.platform}
-                  onChange={e => setFormData({...formData, platform: e.target.value as Platform})}
-                >
-                  {Object.values(Platform).map(p => (
-                    <option key={p} value={p}>{p}</option>
-                  ))}
-                </select>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Plataforma <span className="text-red-400">*</span>
+                </label>
+                {!useCustomPlatform ? (
+                  <>
+                    <select
+                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all"
+                      value={formData.platform}
+                      onChange={e => setFormData({...formData, platform: e.target.value as Platform})}
+                    >
+                      {Object.values(Platform).map(p => (
+                        <option key={p} value={p}>{p}</option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => setUseCustomPlatform(true)}
+                      className="text-xs text-indigo-400 hover:text-indigo-300 mt-1"
+                    >
+                      + Usar plataforma personalizada
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Nombre de la plataforma..."
+                      className={`w-full bg-slate-800 border ${errors.customPlatform ? 'border-red-500' : 'border-slate-700'} rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all`}
+                      value={formData.customPlatform}
+                      onChange={e => setFormData({...formData, customPlatform: e.target.value})}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setUseCustomPlatform(false)}
+                      className="text-xs text-indigo-400 hover:text-indigo-300 mt-1"
+                    >
+                      ← Volver a lista predefinida
+                    </button>
+                    {errors.customPlatform && (
+                      <span className="text-xs text-red-400 flex items-center gap-1 mt-1">
+                        <AlertCircle size={12} /> {errors.customPlatform}
+                      </span>
+                    )}
+                  </>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">Categoría</label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Categoría <span className="text-red-400">*</span>
+                </label>
                 <select
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all appearance-none"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all"
                   value={formData.category}
                   onChange={e => setFormData({...formData, category: e.target.value as Category})}
                 >
@@ -182,35 +329,37 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
               </div>
             </div>
 
-            {/* Image Section */}
+            {/* Imagen */}
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2">Imagen del Resultado</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Imagen del Resultado <span className="text-red-400">*</span>
+              </label>
 
               {/* Toggle between URL and Upload */}
               <div className="flex gap-2 mb-3">
                 <button
                   type="button"
                   onClick={() => { setImageMode('url'); clearImage(); }}
-                  className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                  className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
                     imageMode === 'url'
-                      ? 'bg-primary text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30'
+                      : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
                   }`}
                 >
                   <ImageIcon size={16} className="inline mr-2" />
-                  URL
+                  URL de Imagen
                 </button>
                 <button
                   type="button"
                   onClick={() => { setImageMode('upload'); clearImage(); }}
-                  className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                  className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
                     imageMode === 'upload'
-                      ? 'bg-primary text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30'
+                      : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
                   }`}
                 >
                   <Upload size={16} className="inline mr-2" />
-                  Subir Imagen
+                  Subir Archivo
                 </button>
               </div>
 
@@ -221,8 +370,8 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
                   </div>
                   <input
                     type="url"
-                    placeholder="https://..."
-                    className="w-full pl-10 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                    placeholder="https://ejemplo.com/imagen.jpg"
+                    className={`w-full pl-10 bg-slate-800 border ${errors.imageUrl ? 'border-red-500' : 'border-slate-700'} rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all`}
                     value={formData.imageUrl}
                     onChange={e => setFormData({...formData, imageUrl: e.target.value})}
                   />
@@ -239,10 +388,10 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
                   />
                   <label
                     htmlFor="image-upload"
-                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-700 rounded-lg cursor-pointer bg-slate-900 hover:bg-slate-800 hover:border-primary/50 transition-all"
+                    className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed ${errors.imageUrl ? 'border-red-500' : 'border-slate-700'} rounded-lg cursor-pointer bg-slate-800 hover:bg-slate-800/50 hover:border-indigo-500/50 transition-all group`}
                   >
                     {imagePreview ? (
-                      <div className="relative w-full h-full">
+                      <div className="relative w-full h-full p-2">
                         <img
                           src={imagePreview}
                           alt="Preview"
@@ -251,77 +400,145 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({ isOpen, onClose, 
                         <button
                           type="button"
                           onClick={(e) => { e.preventDefault(); clearImage(); }}
-                          className="absolute top-2 right-2 p-1 bg-red-500 rounded-full text-white hover:bg-red-600"
+                          className="absolute top-3 right-3 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors shadow-lg"
                         >
                           <X size={16} />
                         </button>
                       </div>
                     ) : (
                       <>
-                        <Upload size={24} className="text-slate-500 mb-2" />
-                        <span className="text-sm text-slate-400">Haz clic para subir una imagen</span>
+                        <Upload size={32} className="text-slate-500 group-hover:text-indigo-400 mb-3 transition-colors" />
+                        <span className="text-sm text-slate-400 group-hover:text-white transition-colors">Haz clic para subir una imagen</span>
                         <span className="text-xs text-slate-500 mt-1">PNG, JPG, GIF hasta 5MB</span>
                       </>
                     )}
                   </label>
                 </div>
               )}
-              <p className="text-xs text-slate-500 mt-1">Deja vacío para usar una imagen por defecto.</p>
+              {errors.imageUrl && (
+                <span className="text-xs text-red-400 flex items-center gap-1 mt-1">
+                  <AlertCircle size={12} /> {errors.imageUrl}
+                </span>
+              )}
             </div>
 
+            {/* Descripción */}
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Descripción Corta</label>
-              <input
-                required
-                type="text"
-                placeholder="Describe brevemente qué hace este prompt..."
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Descripción Corta <span className="text-red-400">*</span>
+              </label>
+              <textarea
+                rows={2}
+                placeholder="Describe brevemente qué hace este prompt y para qué sirve..."
+                className={`w-full bg-slate-800 border ${errors.description ? 'border-red-500' : 'border-slate-700'} rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all resize-none`}
                 value={formData.description}
                 onChange={e => setFormData({...formData, description: e.target.value})}
               />
+              <div className="flex justify-between items-center mt-1">
+                {errors.description && (
+                  <span className="text-xs text-red-400 flex items-center gap-1">
+                    <AlertCircle size={12} /> {errors.description}
+                  </span>
+                )}
+                <div className="ml-auto">
+                  {getCharacterCount(formData.description, 20, 200)}
+                </div>
+              </div>
             </div>
 
+            {/* Contenido del Prompt */}
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Prompt (Contenido)</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Contenido del Prompt <span className="text-red-400">*</span>
+              </label>
               <textarea
-                required
-                rows={6}
-                placeholder="Escribe el prompt completo aquí..."
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white font-mono text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all resize-none"
+                rows={8}
+                placeholder="Escribe el prompt completo aquí. Sé específico y detallado para que los usuarios puedan usarlo fácilmente..."
+                className={`w-full bg-slate-800 border ${errors.content ? 'border-red-500' : 'border-slate-700'} rounded-lg px-4 py-3 text-white placeholder-slate-500 font-mono text-sm focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all resize-none`}
                 value={formData.content}
                 onChange={e => setFormData({...formData, content: e.target.value})}
               />
+              <div className="flex justify-between items-center mt-1">
+                {errors.content && (
+                  <span className="text-xs text-red-400 flex items-center gap-1">
+                    <AlertCircle size={12} /> {errors.content}
+                  </span>
+                )}
+                <div className="ml-auto">
+                  {getCharacterCount(formData.content, 50, 5000)}
+                </div>
+              </div>
             </div>
 
+            {/* Etiquetas */}
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Etiquetas (separadas por coma)</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Etiquetas <span className="text-red-400">*</span>
+                <span className="text-xs text-slate-500 ml-2">(mínimo 3, separadas por comas)</span>
+              </label>
               <input
                 type="text"
-                placeholder="marketing, seo, redacción..."
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                placeholder="marketing, seo, redacción, copywriting, redes sociales..."
+                className={`w-full bg-slate-800 border ${errors.tags ? 'border-red-500' : 'border-slate-700'} rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all`}
                 value={formData.tags}
                 onChange={e => setFormData({...formData, tags: e.target.value})}
               />
+              {errors.tags ? (
+                <span className="text-xs text-red-400 flex items-center gap-1 mt-1">
+                  <AlertCircle size={12} /> {errors.tags}
+                </span>
+              ) : (
+                <span className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                  <Check size={12} className="text-green-400" />
+                  {formData.tags.split(',').filter(t => t.trim()).length} etiquetas añadidas
+                </span>
+              )}
             </div>
+
+            {/* Error de submit */}
+            {errors.submit && (
+              <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg">
+                <span className="text-sm text-red-400 flex items-center gap-2">
+                  <AlertCircle size={16} /> {errors.submit}
+                </span>
+              </div>
+            )}
 
           </form>
         </div>
 
         {/* Footer Actions */}
-        <div className="p-5 border-t border-slate-800 bg-slate-900/50 flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-slate-400 hover:text-white font-medium transition-colors"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            form="create-prompt-form"
-            className="px-6 py-2 bg-primary hover:bg-indigo-500 text-white rounded-lg font-medium transition-colors shadow-lg shadow-primary/20 flex items-center gap-2"
-          >
-            <Save size={18} /> Publicar Prompt
-          </button>
+        <div className="p-5 border-t border-slate-800 bg-slate-900/50 flex justify-between items-center">
+          <div className="text-xs text-slate-500">
+            <span className="text-red-400">*</span> Campos obligatorios
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="px-5 py-2.5 text-slate-400 hover:text-white font-medium transition-colors hover:bg-slate-800 rounded-lg disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="create-prompt-form"
+              disabled={isSubmitting}
+              className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg font-medium transition-all shadow-lg shadow-indigo-500/30 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Guardando...
+                </>
+              ) : (
+                <>
+                  <Save size={18} />
+                  {initialData ? 'Actualizar' : 'Publicar Prompt'}
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
       </div>

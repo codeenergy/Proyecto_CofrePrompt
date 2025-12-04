@@ -1,0 +1,117 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidPrompt() {
+      let prompt = request.resource.data;
+      return prompt.title is string
+        && prompt.title.size() >= 10
+        && prompt.title.size() <= 100
+        && prompt.description is string
+        && prompt.description.size() >= 20
+        && prompt.description.size() <= 200
+        && prompt.content is string
+        && prompt.content.size() >= 50
+        && prompt.content.size() <= 5000
+        && prompt.category is string
+        && prompt.platform is string
+        && prompt.tags is list
+        && prompt.tags.size() >= 3
+        && prompt.tags.size() <= 10
+        && prompt.authorId is string
+        && prompt.author is string
+        && prompt.likes is number
+        && prompt.views is number;
+    }
+
+    // Prompts collection
+    match /prompts/{promptId} {
+      // Anyone can read prompts
+      allow read: if true;
+
+      // Only authenticated users can create prompts
+      allow create: if isAuthenticated()
+        && isOwner(request.resource.data.authorId)
+        && isValidPrompt();
+
+      // Only the author can update their own prompts
+      allow update: if isAuthenticated()
+        && isOwner(resource.data.authorId)
+        && (
+          // Allow updating prompt content fields
+          request.resource.data.authorId == resource.data.authorId
+          // Or allow updating stats (likes, views)
+          || (
+            request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(['likes', 'views', 'updatedAt'])
+          )
+        );
+
+      // Only the author can delete their own prompts
+      allow delete: if isAuthenticated()
+        && isOwner(resource.data.authorId);
+    }
+
+    // Users collection
+    match /users/{userId} {
+      // Users can read their own data
+      allow read: if isAuthenticated() && isOwner(userId);
+
+      // Users can create their own profile
+      allow create: if isAuthenticated() && isOwner(userId);
+
+      // Users can update their own profile
+      allow update: if isAuthenticated() && isOwner(userId);
+
+      // Users cannot delete their profile
+      allow delete: if false;
+    }
+
+    // Comments collection
+    match /comments/{commentId} {
+      // Anyone can read comments
+      allow read: if true;
+
+      // Only authenticated users can create comments
+      allow create: if isAuthenticated()
+        && isOwner(request.resource.data.userId);
+
+      // Only the comment author can update
+      allow update: if isAuthenticated()
+        && isOwner(resource.data.userId);
+
+      // Only the comment author can delete
+      allow delete: if isAuthenticated()
+        && isOwner(resource.data.userId);
+    }
+
+    // Collections
+    match /collections/{collectionId} {
+      // Users can read their own collections
+      allow read: if isAuthenticated()
+        && isOwner(resource.data.userId);
+
+      // Users can create their own collections
+      allow create: if isAuthenticated()
+        && isOwner(request.resource.data.userId);
+
+      // Users can update their own collections
+      allow update: if isAuthenticated()
+        && isOwner(resource.data.userId);
+
+      // Users can delete their own collections
+      allow delete: if isAuthenticated()
+        && isOwner(resource.data.userId);
+    }
+  }
+}

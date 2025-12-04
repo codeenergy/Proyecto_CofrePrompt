@@ -17,6 +17,7 @@ interface ModalProps {
   onAddComment?: (comment: Omit<Comment, 'id' | 'createdAt' | 'likes'>) => void;
   onLikeComment?: (commentId: string) => void;
   onToggleFavorite?: (promptId: string) => void;
+  onCopySuccess?: () => void;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -28,7 +29,8 @@ const Modal: React.FC<ModalProps> = ({
   comments = [],
   onAddComment = () => {},
   onLikeComment = () => {},
-  onToggleFavorite = () => {}
+  onToggleFavorite = () => {},
+  onCopySuccess = () => {}
 }) => {
   const [activeTab, setActiveTab] = useState<'content' | 'comments' | 'stats'>('content');
   const [showCollections, setShowCollections] = useState(false);
@@ -44,9 +46,14 @@ const Modal: React.FC<ModalProps> = ({
     }
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(prompt.content);
-    setCopyCount(prev => prev + 1);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(prompt.content);
+      setCopyCount(prev => prev + 1);
+      onCopySuccess();
+    } catch (error) {
+      console.error('Error al copiar:', error);
+    }
   };
 
   const handleDownload = () => {
@@ -87,29 +94,31 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
         <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
 
-        <div className="relative bg-slate-900 border border-slate-800 w-full max-w-5xl max-h-[90vh] rounded-xl shadow-2xl overflow-hidden flex flex-col">
+        <div className="relative bg-slate-900 border border-slate-800 w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
 
           {/* Header */}
-          <div className="flex items-start justify-between p-4 border-b border-slate-800">
+          <div className="flex items-start justify-between p-5 border-b border-slate-800 bg-gradient-to-r from-indigo-600/5 to-purple-600/5">
             <div className="flex-1 min-w-0 pr-4">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
                   {prompt.category}
                 </span>
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400">
+                <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
                   {prompt.platform}
                 </span>
               </div>
-              <h2 className="text-lg font-bold text-white truncate">{prompt.title}</h2>
-              <p className="text-xs text-slate-500 mt-1">
-                Por {prompt.author} • {prompt.createdAt}
+              <h2 className="text-xl font-bold text-white truncate mb-1">{prompt.title}</h2>
+              <p className="text-xs text-slate-400 flex items-center gap-2">
+                <span>Por {prompt.author}</span>
+                <span className="text-slate-600">•</span>
+                <span>{prompt.createdAt}</span>
               </p>
             </div>
-            <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
-              <X size={18} />
+            <button onClick={onClose} className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all hover:rotate-90 duration-300">
+              <X size={20} />
             </button>
           </div>
 
@@ -161,11 +170,11 @@ const Modal: React.FC<ModalProps> = ({
                   {prompt.description}
                 </p>
 
-                <div className="bg-slate-950 rounded-lg border border-slate-800 p-4 relative">
-                  <span className="absolute top-2 right-2 text-[10px] text-slate-600 font-mono">prompt.txt</span>
+                <div className="bg-slate-950 rounded-xl border border-slate-800 p-5 relative group hover:border-slate-700 transition-colors">
+                  <span className="absolute top-3 right-3 text-[10px] text-slate-600 font-mono bg-slate-900 px-2 py-1 rounded">prompt.txt</span>
 
                   {user ? (
-                    <pre className="font-mono text-sm text-emerald-400 whitespace-pre-wrap leading-relaxed">
+                    <pre className="font-mono text-sm text-emerald-400 whitespace-pre-wrap leading-relaxed pt-2">
                       {prompt.content}
                     </pre>
                   ) : (
@@ -223,38 +232,38 @@ const Modal: React.FC<ModalProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-800 flex gap-2">
+          <div className="p-5 border-t border-slate-800 bg-slate-900/50 flex gap-2">
             <button
               onClick={() => handleAction(handleCopy)}
-              className="flex-1 h-10 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="flex-1 h-11 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-semibold rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:scale-[1.02]"
             >
-              {user ? <Copy size={16} /> : <Lock size={14} />}
+              {user ? <Copy size={18} /> : <Lock size={16} />}
               {user ? "Copiar Prompt" : "Login para Copiar"}
             </button>
             <button
               onClick={() => handleAction(handleDownload)}
-              className="h-10 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors flex items-center justify-center"
+              className="h-11 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition-all flex items-center justify-center hover:scale-105"
               title="Descargar"
             >
-              <Download size={16} />
+              <Download size={18} />
             </button>
             <button
               onClick={() => handleAction(() => onToggleFavorite(prompt.id))}
-              className={`h-10 px-4 rounded-lg transition-colors flex items-center justify-center ${
+              className={`h-11 px-4 rounded-lg transition-all flex items-center justify-center hover:scale-105 ${
                 isFavorite
-                  ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
-                  : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                  ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30 shadow-lg shadow-red-500/20'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
               }`}
               title={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
             >
-              <Heart size={16} className={isFavorite ? 'fill-current' : ''} />
+              <Heart size={18} className={isFavorite ? 'fill-current animate-pulse' : ''} />
             </button>
             <button
               onClick={() => handleAction(() => setShowCollections(true))}
-              className="h-10 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors flex items-center justify-center"
+              className="h-11 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition-all flex items-center justify-center hover:scale-105"
               title="Guardar en colección"
             >
-              <BookMarked size={16} />
+              <BookMarked size={18} />
             </button>
           </div>
 
