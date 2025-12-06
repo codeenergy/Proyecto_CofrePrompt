@@ -8,9 +8,9 @@ Una plataforma moderna y completa para descubrir, crear y compartir prompts de I
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tu-usuario/cofreprompt)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/codeenergy/Proyecto_CofrePrompt)
 
-[Demo en vivo](https://cofreprompt.vercel.app) · [Reportar Bug](https://github.com/tu-usuario/cofreprompt/issues) · [Solicitar Feature](https://github.com/tu-usuario/cofreprompt/issues) · [📚 Documentación](docs/)
+[Demo en vivo](https://cofreprompt.vercel.app) · [Reportar Bug](https://github.com/codeenergy/Proyecto_CofrePrompt/issues) · [Solicitar Feature](https://github.com/codeenergy/Proyecto_CofrePrompt/issues) · [📚 Documentación](docs/) · [✉️ Contacto](mailto:soporte@cofreprompt.com)
 
 </div>
 
@@ -78,7 +78,7 @@ Una plataforma moderna y completa para descubrir, crear y compartir prompts de I
 
 ### Opción 1: Deploy con un Click
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tu-usuario/cofreprompt)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/codeenergy/Proyecto_CofrePrompt)
 
 ### Opción 2: Deploy Manual
 
@@ -129,8 +129,8 @@ Una plataforma moderna y completa para descubrir, crear y compartir prompts de I
 
 1. **Clona el repositorio**:
    ```bash
-   git clone https://github.com/tu-usuario/cofreprompt.git
-   cd cofreprompt
+   git clone https://github.com/codeenergy/Proyecto_CofrePrompt.git
+   cd Proyecto_CofrePrompt
    ```
 
 2. **Instala las dependencias**:
@@ -274,10 +274,11 @@ Las contribuciones son bienvenidas! Por favor:
 
 ## 👨‍💻 Autor
 
-**Tu Nombre**
+**CofrePrompt Team**
 
-- GitHub: [@tu-usuario](https://github.com/tu-usuario)
-- Twitter: [@tu-twitter](https://twitter.com/tu-twitter)
+- GitHub: [@codeenergy](https://github.com/codeenergy)
+- Email: [soporte@cofreprompt.com](mailto:soporte@cofreprompt.com)
+- Web: [cofreprompt.com](https://cofreprompt.com)
 
 ---
 

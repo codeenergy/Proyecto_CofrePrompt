@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import PromptCard from './components/PromptCard';
 import Modal from './components/Modal';
 import CreatePromptModal from './components/CreatePromptModal';
+import EditProfileModal from './components/EditProfileModal';
 import UserProfile from './components/UserProfile';
 import Footer from './components/Footer';
 import LegalModal from './components/LegalModal';
@@ -19,7 +20,11 @@ import {
   getPromptsFromDb,
   savePromptToDb,
   updatePromptInDb,
-  deletePromptFromDb
+  deletePromptFromDb,
+  getUserData,
+  saveUserData,
+  addToFavorites,
+  removeFromFavorites
 } from './services/firebase';
 
 type SortOption = 'DEFAULT' | 'LIKES' | 'NEWEST';
@@ -88,12 +93,23 @@ function App() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
   const [showUserProfile, setShowUserProfile] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
   const [legalModalView, setLegalModalView] = useState<LegalView | null>(null);
 
   // Escuchar cambios en la autenticación para mantener sesión
   useEffect(() => {
-    const unsubscribe = onAuthChange((authUser) => {
-      setUser(authUser);
+    const unsubscribe = onAuthChange(async (authUser) => {
+      if (authUser) {
+        // Cargar datos adicionales del usuario desde Firebase
+        const userData = await getUserData(authUser.uid);
+        if (userData) {
+          setUser({ ...authUser, ...userData });
+        } else {
+          setUser(authUser);
+        }
+      } else {
+        setUser(null);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -152,7 +168,27 @@ function App() {
   const handleLogin = async () => {
     try {
       const loggedInUser = await signInWithGoogle();
-      setUser(loggedInUser);
+
+      // Verificar si el usuario ya tiene datos en Firebase
+      let userData = await getUserData(loggedInUser.uid);
+
+      if (!userData) {
+        // Si es la primera vez que inicia sesión, crear perfil
+        await saveUserData(loggedInUser.uid, {
+          uid: loggedInUser.uid,
+          displayName: loggedInUser.displayName,
+          email: loggedInUser.email,
+          photoURL: loggedInUser.photoURL,
+          bio: '',
+          favoritePrompts: [],
+          collections: [],
+          following: [],
+          followers: []
+        });
+        userData = await getUserData(loggedInUser.uid);
+      }
+
+      setUser({ ...loggedInUser, ...userData });
       showToast(`¡Bienvenido ${loggedInUser.displayName}!`, 'success');
     } catch (error) {
       console.error("Login failed", error);
@@ -247,13 +283,30 @@ function App() {
     ));
   };
 
-  const handleToggleFavorite = (promptId: string) => {
+  const handleToggleFavorite = async (promptId: string) => {
     if (!user) return;
+
     const favorites = user.favoritePrompts || [];
-    const newFavorites = favorites.includes(promptId)
-      ? favorites.filter(id => id !== promptId)
-      : [...favorites, promptId];
-    setUser({ ...user, favoritePrompts: newFavorites });
+    const isFavorite = favorites.includes(promptId);
+
+    try {
+      if (isFavorite) {
+        // Quitar de favoritos
+        await removeFromFavorites(user.uid, promptId);
+        const newFavorites = favorites.filter(id => id !== promptId);
+        setUser({ ...user, favoritePrompts: newFavorites });
+        showToast('Eliminado de favoritos', 'success');
+      } else {
+        // Agregar a favoritos
+        await addToFavorites(user.uid, promptId);
+        const newFavorites = [...favorites, promptId];
+        setUser({ ...user, favoritePrompts: newFavorites });
+        showToast('Agregado a favoritos', 'success');
+      }
+    } catch (error) {
+      console.error('Error al actualizar favoritos:', error);
+      showToast('Error al actualizar favoritos', 'error');
+    }
   };
 
   const handleMarkNotificationAsRead = (id: string) => {
@@ -268,6 +321,20 @@ function App() {
 
   const handleClearNotification = (id: string) => {
     setNotifications(notifications.filter(n => n.id !== id));
+  };
+
+  const handleUpdateProfile = async (updates: { displayName?: string; bio?: string }) => {
+    if (!user) return;
+
+    try {
+      showToast('Actualizando perfil...', 'info');
+      await saveUserData(user.uid, updates);
+      setUser({ ...user, ...updates });
+      showToast('Perfil actualizado exitosamente', 'success');
+    } catch (error) {
+      console.error('Error al actualizar perfil:', error);
+      showToast('Error al actualizar perfil', 'error');
+    }
   };
 
   return (
@@ -407,11 +474,24 @@ function App() {
           isOwnProfile={true}
           onClose={() => setShowUserProfile(false)}
           onOpenPrompt={setSelectedPrompt}
+          onEditProfile={() => {
+            setShowUserProfile(false);
+            setShowEditProfile(true);
+          }}
           onEditPrompt={(prompt) => {
             setEditingPrompt(prompt);
             setShowUserProfile(false);
           }}
           onDeletePrompt={handleDeletePrompt}
+        />
+      )}
+
+      {user && (
+        <EditProfileModal
+          isOpen={showEditProfile}
+          onClose={() => setShowEditProfile(false)}
+          user={user}
+          onSave={handleUpdateProfile}
         />
       )}
 

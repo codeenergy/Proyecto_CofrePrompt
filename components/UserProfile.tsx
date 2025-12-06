@@ -227,7 +227,12 @@ export default function UserProfile({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {favoritePrompts.length > 0 ? (
                 favoritePrompts.map((prompt) => (
-                  <PromptCard key={prompt.id} prompt={prompt} onOpen={() => {}} />
+                  <PromptCard
+                    key={prompt.id}
+                    prompt={prompt}
+                    onOpen={onOpenPrompt ? () => onOpenPrompt(prompt) : () => {}}
+                    onCopy={() => {}}
+                  />
                 ))
               ) : (
                 <div className="col-span-full text-center py-12 text-slate-400">

@@ -1,18 +1,18 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, doc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, doc, updateDoc, deleteDoc, setDoc, getDoc, Timestamp } from "firebase/firestore";
 import { User, Prompt } from "../types";
 
-// Configuración de Firebase
+// Configuración de Firebase desde variables de entorno
 const firebaseConfig = {
-  apiKey: "AIzaSyCJ4aZq_7AX98lMEDb-t9UBPrtCG0CHHkI",
-  authDomain: "cofreprompt.firebaseapp.com",
-  projectId: "cofreprompt",
-  storageBucket: "cofreprompt.firebasestorage.app",
-  messagingSenderId: "887253905394",
-  appId: "1:887253905394:web:9a4e38ec6d5b713c23456b",
-  measurementId: "G-2T1P0Y3D2T"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Inicializar Firebase
@@ -197,22 +197,15 @@ export const incrementPromptViews = async (promptId: string, currentViews: numbe
 export const saveUserData = async (userId: string, userData: Partial<User>) => {
   try {
     const userRef = doc(db, "users", userId);
-    await updateDoc(userRef, userData);
-    console.log("Datos de usuario actualizados");
+    await setDoc(userRef, {
+      ...userData,
+      updatedAt: Timestamp.now()
+    }, { merge: true });
+    console.log("Datos de usuario guardados/actualizados");
     return true;
-  } catch (e) {
-    // Si el documento no existe, crearlo
-    try {
-      const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, {
-        ...userData,
-        createdAt: Timestamp.now()
-      });
-      return true;
-    } catch (error) {
-      console.error("Error guardando datos de usuario: ", error);
-      throw error;
-    }
+  } catch (error) {
+    console.error("Error guardando datos de usuario: ", error);
+    throw error;
   }
 };
 
@@ -220,13 +213,13 @@ export const saveUserData = async (userId: string, userData: Partial<User>) => {
 export const getUserData = async (userId: string): Promise<User | null> => {
   try {
     const userRef = doc(db, "users", userId);
-    const userSnap = await getDocs(query(collection(db, "users"), where("uid", "==", userId)));
+    const userSnap = await getDoc(userRef);
 
-    if (userSnap.empty) {
+    if (!userSnap.exists()) {
       return null;
     }
 
-    const userData = userSnap.docs[0].data();
+    const userData = userSnap.data();
     return userData as User;
   } catch (e) {
     console.error("Error obteniendo datos de usuario: ", e);
@@ -242,9 +235,10 @@ export const addToFavorites = async (userId: string, promptId: string) => {
 
     const currentFavorites = userData?.favoritePrompts || [];
     if (!currentFavorites.includes(promptId)) {
-      await updateDoc(userRef, {
-        favoritePrompts: [...currentFavorites, promptId]
-      });
+      await setDoc(userRef, {
+        favoritePrompts: [...currentFavorites, promptId],
+        updatedAt: Timestamp.now()
+      }, { merge: true });
     }
     return true;
   } catch (e) {
@@ -260,9 +254,10 @@ export const removeFromFavorites = async (userId: string, promptId: string) => {
     const userData = await getUserData(userId);
 
     const currentFavorites = userData?.favoritePrompts || [];
-    await updateDoc(userRef, {
-      favoritePrompts: currentFavorites.filter(id => id !== promptId)
-    });
+    await setDoc(userRef, {
+      favoritePrompts: currentFavorites.filter(id => id !== promptId),
+      updatedAt: Timestamp.now()
+    }, { merge: true });
     return true;
   } catch (e) {
     console.error("Error eliminando de favoritos: ", e);
