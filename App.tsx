@@ -12,6 +12,8 @@ import AdUnit from './components/AdUnit';
 import Toast, { ToastType } from './components/Toast';
 import LoadingSpinner from './components/LoadingSpinner';
 import SkeletonCard from './components/SkeletonCard';
+import MonetagAdsProvider from './components/MonetagAdsProvider';
+import MonetagDirectLink from './components/MonetagDirectLink';
 import { Category, Platform, Prompt, User, Comment, Collection, Notification } from './types';
 import { MOCK_PROMPTS } from './constants';
 import {
@@ -338,8 +340,9 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
-      <Navbar
+    <MonetagAdsProvider>
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
+        <Navbar
         user={user}
         setUser={setUser}
         searchTerm={searchTerm}
@@ -414,6 +417,9 @@ function App() {
 
               {/* AdSense - Banner Inferior */}
               <AdUnit slot="1122334455" format="horizontal" className="mt-6" />
+
+              {/* Monetag Direct Link - Solo en producción */}
+              <MonetagDirectLink className="mt-4" />
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -500,18 +506,19 @@ function App() {
         onClose={() => setLegalModalView(null)}
       />
 
-      {/* Toast Notifications */}
-      <div className="fixed top-20 right-4 z-[60] space-y-2">
-        {toasts.map(toast => (
-          <Toast
-            key={toast.id}
-            message={toast.message}
-            type={toast.type}
-            onClose={() => removeToast(toast.id)}
-          />
-        ))}
+        {/* Toast Notifications */}
+        <div className="fixed top-20 right-4 z-[60] space-y-2">
+          {toasts.map(toast => (
+            <Toast
+              key={toast.id}
+              message={toast.message}
+              type={toast.type}
+              onClose={() => removeToast(toast.id)}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </MonetagAdsProvider>
   );
 }
 
