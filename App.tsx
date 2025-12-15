@@ -13,6 +13,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import SkeletonCard from './components/SkeletonCard';
 import MonetagAdsProvider from './components/MonetagAdsProvider';
 import MonetagDirectLink from './components/MonetagDirectLink';
+import HotmartFloatingButton from './components/HotmartFloatingButton';
 import { Category, Platform, Prompt, User, Comment, Collection, Notification } from './types';
 import { MOCK_PROMPTS } from './constants';
 import {
@@ -500,6 +501,9 @@ function App() {
             />
           ))}
         </div>
+
+        {/* Botón Flotante de Hotmart */}
+        <HotmartFloatingButton />
       </div>
     </MonetagAdsProvider>
   );
