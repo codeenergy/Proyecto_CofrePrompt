@@ -8,7 +8,6 @@ import EditProfileModal from './components/EditProfileModal';
 import UserProfile from './components/UserProfile';
 import Footer from './components/Footer';
 import LegalModal from './components/LegalModal';
-import AdUnit from './components/AdUnit';
 import Toast, { ToastType } from './components/Toast';
 import LoadingSpinner from './components/LoadingSpinner';
 import SkeletonCard from './components/SkeletonCard';
@@ -367,9 +366,6 @@ function App() {
         />
 
         <main className="flex-1 min-w-0 p-3 sm:p-4 lg:p-5">
-          {/* AdSense - Banner Superior */}
-          <AdUnit slot="1234567890" format="horizontal" className="mb-4" />
-
           {/* Header */}
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -395,31 +391,18 @@ function App() {
           ) : filteredPrompts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
-                {filteredPrompts.map((prompt, index) => {
-                  const Fragment = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-                  return (
-                    <Fragment key={prompt.id}>
-                      <PromptCard
-                        prompt={prompt}
-                        onOpen={setSelectedPrompt}
-                        onCopy={() => showToast('Prompt copiado al portapapeles', 'success')}
-                      />
-                      {/* AdSense cada 8 prompts */}
-                      {(index + 1) % 8 === 0 && (
-                        <div className="col-span-full">
-                          <AdUnit slot="0987654321" format="fluid" />
-                        </div>
-                      )}
-                    </Fragment>
-                  );
-                })}
+                {filteredPrompts.map((prompt) => (
+                  <PromptCard
+                    key={prompt.id}
+                    prompt={prompt}
+                    onOpen={setSelectedPrompt}
+                    onCopy={() => showToast('Prompt copiado al portapapeles', 'success')}
+                  />
+                ))}
               </div>
 
-              {/* AdSense - Banner Inferior */}
-              <AdUnit slot="1122334455" format="horizontal" className="mt-6" />
-
               {/* Monetag Direct Link - Solo en producción */}
-              <MonetagDirectLink className="mt-4" />
+              <MonetagDirectLink className="mt-6" />
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-center">

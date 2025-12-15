@@ -1,11 +1,22 @@
-// Configuración de Monetag Ads
-// Solo se activa en producción para no molestar durante desarrollo
+// ═══════════════════════════════════════════════════════════════════════════
+// CONFIGURACIÓN OPTIMIZADA DE MONETAG
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// ✅ SOLO SE ACTIVA EN PRODUCCIÓN (Vercel)
+// ✅ DELAYS OPTIMIZADOS PARA BUENA UX
+// ✅ CONTROL TOTAL DESDE UN SOLO LUGAR
+//
+// Para deshabilitar todos los anuncios: enabled: false
+// Para deshabilitar un tipo específico: inPagePush.enabled: false
+// ═══════════════════════════════════════════════════════════════════════════
 
 export const MONETAG_CONFIG = {
-  // Control maestro - puedes deshabilitar todo desde aquí
-  enabled: true,
+  // ──────────────────────────────────────────────────────────────────────────
+  // CONTROL MAESTRO
+  // ──────────────────────────────────────────────────────────────────────────
+  enabled: true, // ← Cambiar a false para deshabilitar TODOS los anuncios
 
-  // Detectar si estamos en producción
+  // Detectar si estamos en producción (Vercel)
   isProduction: () => {
     if (typeof window === 'undefined') return false;
     return window.location.hostname !== 'localhost' &&
@@ -13,31 +24,36 @@ export const MONETAG_CONFIG = {
            !window.location.hostname.includes('192.168');
   },
 
-  // Configuración de In-Page Push
+  // ──────────────────────────────────────────────────────────────────────────
+  // IN-PAGE PUSH (Zona: 10325700)
+  // ──────────────────────────────────────────────────────────────────────────
+  // Notificaciones discretas - BAJA INTRUSIÓN
   inPagePush: {
     enabled: true,
     zone: '10325700',
     src: 'https://nap5k.com/tag.min.js',
-    // Delay antes de cargar (en milisegundos) - da tiempo al usuario de ver el contenido primero
-    delayMs: 3000,
+    delayMs: 4000, // 4 segundos - Usuario ve el contenido primero
   },
 
-  // Configuración de Vignette Banner
+  // ──────────────────────────────────────────────────────────────────────────
+  // VIGNETTE BANNER (Zona: 10325703)
+  // ──────────────────────────────────────────────────────────────────────────
+  // Pantalla completa al navegar - MEDIA INTRUSIÓN
   vignetteBanner: {
     enabled: true,
     zone: '10325703',
     src: 'https://gizokraijaw.net/vignette.min.js',
-    // Delay antes de cargar - menos intrusivo si se espera un poco
-    delayMs: 5000,
-    // Frecuencia: mostrar solo 1 vez por sesión
-    maxPerSession: 1,
+    delayMs: 8000, // 8 segundos - Mucho menos intrusivo
+    maxPerSession: 1, // Solo 1 vez por sesión - Respeta al usuario
   },
 
-  // Direct Link - solo mostrar en secciones específicas
+  // ──────────────────────────────────────────────────────────────────────────
+  // DIRECT LINK (https://otieu.com/4/10325708)
+  // ──────────────────────────────────────────────────────────────────────────
+  // Banner visual integrado - BAJA INTRUSIÓN
   directLink: {
     enabled: true,
     url: 'https://otieu.com/4/10325708',
-    // Mostrar solo en ciertas rutas/secciones
     showInFooter: true,
     showInModal: false,
   },
