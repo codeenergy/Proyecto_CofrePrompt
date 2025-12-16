@@ -18,86 +18,140 @@
 
   <!-- Monetag Ads - Solo en Producción -->
   <script>
-    // Detectar si estamos en producción (Vercel, Netlify, dominios personalizados, etc.)
-    const isProduction = window.location.hostname !== 'localhost' &&
-                        window.location.hostname !== '127.0.0.1' &&
-                        !window.location.hostname.includes('192.168') &&
-                        !window.location.hostname.includes('::1');
+    // Esperar a que el DOM esté completamente cargado
+    document.addEventListener('DOMContentLoaded', function() {
+      // Detectar si estamos en producción (Vercel, Netlify, dominios personalizados, etc.)
+      const isProduction = window.location.hostname !== 'localhost' &&
+                          window.location.hostname !== '127.0.0.1' &&
+                          !window.location.hostname.includes('192.168') &&
+                          !window.location.hostname.includes('::1');
 
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('🌐 Hostname:', window.location.hostname);
-    console.log('✅ Modo producción:', isProduction);
-    console.log('📍 Protocol:', window.location.protocol);
-    console.log('🔗 Full URL:', window.location.href);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('💻 SISTEMA DE ANUNCIOS MONETAG - DIAGNÓSTICO COMPLETO');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('🌐 Hostname:', window.location.hostname);
+      console.log('📍 Protocol:', window.location.protocol);
+      console.log('🔗 Full URL:', window.location.href);
+      console.log('✅ Modo producción:', isProduction);
+      console.log('📱 User Agent:', navigator.userAgent);
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-    if (isProduction) {
-      console.log('🚀 Iniciando carga de anuncios Monetag...');
+      if (isProduction) {
+        console.log('🚀 Iniciando carga de anuncios Monetag...');
+        console.log('⏱️ Timestamp:', new Date().toISOString());
 
-      // Script 1: Native Banner (Nuevo) - después de 2 segundos
-      setTimeout(() => {
-        try {
-          const script1 = document.createElement('script');
-          script1.src = 'https://3nbf4.com/act/files/tag.min.js?z=10331876';
-          script1.setAttribute('data-cfasync', 'false');
-          script1.async = true;
-          document.body.appendChild(script1);
-          console.log('✅ [1/3] Monetag Native Banner cargado (zona: 10331876)');
-        } catch (error) {
-          console.error('❌ [1/3] Error cargando Native Banner:', error);
-        }
-      }, 2000);
-
-      // Script 2: In-Page Push después de 4 segundos
-      setTimeout(() => {
-        try {
-          const script2 = document.createElement('script');
-          script2.dataset.zone = '10325700';
-          script2.src = 'https://nap5k.com/tag.min.js';
-          script2.async = true;
-          document.body.appendChild(script2);
-          console.log('✅ [2/3] Monetag In-Page Push cargado (zona: 10325700)');
-        } catch (error) {
-          console.error('❌ [2/3] Error cargando In-Page Push:', error);
-        }
-      }, 4000);
-
-      // Script 3: Vignette Banner después de 8 segundos (1 vez por sesión)
-      setTimeout(() => {
-        try {
-          const sessionKey = 'monetag_vignette_loaded';
-          if (!sessionStorage.getItem(sessionKey)) {
-            const script3 = document.createElement('script');
-            script3.dataset.zone = '10325703';
-            script3.src = 'https://gizokraijaw.net/vignette.min.js';
-            script3.async = true;
-            document.body.appendChild(script3);
-            sessionStorage.setItem(sessionKey, 'true');
-            console.log('✅ [3/3] Monetag Vignette Banner cargado (zona: 10325703)');
-          } else {
-            console.log('ℹ️ [3/3] Monetag Vignette ya fue mostrado en esta sesión');
+        // Script 1: Native Banner - después de 2 segundos
+        setTimeout(() => {
+          try {
+            const script1 = document.createElement('script');
+            script1.src = 'https://3nbf4.com/act/files/tag.min.js?z=10331876';
+            script1.setAttribute('data-cfasync', 'false');
+            script1.async = true;
+            document.body.appendChild(script1);
+            console.log('✅ [1/4] Monetag Native Banner cargado (zona: 10331876)');
+          } catch (error) {
+            console.error('❌ [1/4] Error cargando Native Banner:', error);
           }
-        } catch (error) {
-          console.error('❌ [3/3] Error cargando Vignette:', error);
-        }
-      }, 8000);
+        }, 2000);
 
-      // Verificar después de 10 segundos si los scripts se cargaron
-      setTimeout(() => {
-        const scripts = document.querySelectorAll('script[src*="monetag"], script[src*="3nbf4.com"], script[src*="nap5k.com"], script[src*="gizokraijaw.net"]');
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('📊 RESUMEN DE CARGA DE ANUNCIOS:');
-        console.log('Total de scripts Monetag cargados:', scripts.length);
-        scripts.forEach((script, index) => {
-          console.log(`  Script ${index + 1}:`, script.src);
-        });
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      }, 10000);
+        // Script 2: In-Page Push después de 4 segundos
+        setTimeout(() => {
+          try {
+            const script2 = document.createElement('script');
+            script2.dataset.zone = '10325700';
+            script2.src = 'https://nap5k.com/tag.min.js';
+            script2.async = true;
+            document.body.appendChild(script2);
+            console.log('✅ [2/4] Monetag In-Page Push cargado (zona: 10325700)');
+          } catch (error) {
+            console.error('❌ [2/4] Error cargando In-Page Push:', error);
+          }
+        }, 4000);
 
-    } else {
-      console.log('🔧 Monetag: Deshabilitado en desarrollo');
-      console.log('�� Para probar los anuncios, despliega en Vercel o usa un dominio real');
-    }
+        // Script 3: Vignette Banner después de 8 segundos (1 vez por sesión)
+        setTimeout(() => {
+          try {
+            const sessionKey = 'monetag_vignette_loaded';
+            if (!sessionStorage.getItem(sessionKey)) {
+              const script3 = document.createElement('script');
+              script3.dataset.zone = '10325703';
+              script3.src = 'https://gizokraijaw.net/vignette.min.js';
+              script3.async = true;
+              document.body.appendChild(script3);
+              sessionStorage.setItem(sessionKey, 'true');
+              console.log('✅ [3/4] Monetag Vignette Banner cargado (zona: 10325703)');
+            } else {
+              console.log('ℹ️ [3/4] Monetag Vignette ya fue mostrado en esta sesión');
+            }
+          } catch (error) {
+            console.error('❌ [3/4] Error cargando Vignette:', error);
+          }
+        }, 8000);
+
+        // Script 4: Social Bar después de 10 segundos
+        setTimeout(() => {
+          try {
+            const script4 = document.createElement('script');
+            script4.src = 'https://otieu.com/4/10325708';
+            script4.async = true;
+            document.body.appendChild(script4);
+            console.log('✅ [4/4] Monetag Social Bar cargado (zona: 10325708)');
+          } catch (error) {
+            console.error('❌ [4/4] Error cargando Social Bar:', error);
+          }
+        }, 10000);
+
+        // Verificar después de 12 segundos si los scripts se cargaron
+        setTimeout(() => {
+          const scripts = document.querySelectorAll('script[src*="monetag"], script[src*="3nbf4.com"], script[src*="nap5k.com"], script[src*="gizokraijaw.net"], script[src*="otieu.com"]');
+          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+          console.log('📊 RESUMEN FINAL DE CARGA DE ANUNCIOS');
+          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+          console.log('✅ Total de scripts Monetag cargados:', scripts.length);
+
+          if (scripts.length > 0) {
+            console.log('📜 Scripts detectados:');
+            scripts.forEach((script, index) => {
+              console.log(`  ${index + 1}. ${script.src}`);
+            });
+            console.log('✅ Sistema de anuncios funcionando correctamente');
+          } else {
+            console.warn('⚠️ NO SE DETECTARON SCRIPTS DE MONETAG');
+            console.warn('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.warn('Posibles causas:');
+            console.warn('  1. ❌ Bloqueador de anuncios activo (AdBlock, uBlock, Brave Shields)');
+            console.warn('  2. ❌ Scripts bloqueados por configuración del navegador');
+            console.warn('  3. ❌ Error de red o timeout');
+            console.warn('  4. ❌ Dominios de Monetag bloqueados por DNS/firewall');
+            console.warn('  5. ⏰ Cuenta de Monetag aún no activada (espera 24-48h)');
+          }
+
+          // Verificar elementos de anuncios en el DOM
+          const adElements = document.querySelectorAll('[id*="monetag"], [class*="monetag"], [id*="banner"], [class*="ad-"]');
+          console.log('📦 Elementos de anuncios en DOM:', adElements.length);
+
+          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+          console.log('💡 RECOMENDACIONES:');
+          console.log('  • Desactiva TODOS los bloqueadores de anuncios');
+          console.log('  • Prueba en modo incógnito (sin extensiones)');
+          console.log('  • Espera 24-48h para que Monetag active tu cuenta');
+          console.log('  • Verifica que tu sitio tenga tráfico real');
+          console.log('  • Los anuncios pueden tardar unos segundos en aparecer');
+          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        }, 12000);
+
+      } else {
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('🔧 MODO DESARROLLO DETECTADO');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('Los anuncios de Monetag están DESHABILITADOS en desarrollo');
+        console.log('Para probar los anuncios:');
+        console.log('  1. Despliega en Vercel: vercel --prod');
+        console.log('  2. O usa un dominio real de producción');
+        console.log('  3. Abre la consola para ver los logs de diagnóstico');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      }
+    });
   </script>
 </body>
 </html>
