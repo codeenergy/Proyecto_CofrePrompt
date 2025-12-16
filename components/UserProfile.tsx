@@ -42,33 +42,48 @@ export default function UserProfile({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-slate-900 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-slate-700">
-        {/* Header */}
-        <div className="relative">
-          <div className="h-32 bg-gradient-to-r from-indigo-600 to-purple-600"></div>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fadeIn">
+      <div className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col border-2 border-transparent shadow-2xl animate-slideUp"
+           style={{
+             backgroundImage: 'linear-gradient(135deg, rgba(255, 109, 0, 0.05) 0%, rgba(14, 77, 164, 0.05) 100%)',
+             boxShadow: '0 0 60px rgba(255, 109, 0, 0.2), 0 0 100px rgba(14, 77, 164, 0.2), inset 0 0 80px rgba(139, 92, 246, 0.05)',
+             borderImage: 'linear-gradient(135deg, rgba(255, 109, 0, 0.4), rgba(14, 77, 164, 0.4)) 1'
+           }}>
+        {/* Header Glassmorphism */}
+        <div className="relative overflow-hidden">
+          <div className="h-40 bg-gradient-to-br from-orange-600 via-blue-600 to-purple-600 relative">
+            {/* Efecto de ondas animadas */}
+            <div className="absolute inset-0 opacity-30">
+              <div className="absolute top-0 left-0 w-96 h-96 bg-orange-500 rounded-full filter blur-3xl animate-blob"></div>
+              <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full filter blur-3xl animate-blob animation-delay-2000"></div>
+              <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-purple-500 rounded-full filter blur-3xl animate-blob animation-delay-4000"></div>
+            </div>
+          </div>
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 bg-black/30 hover:bg-black/50 rounded-lg transition-colors"
+            className="absolute top-4 right-4 p-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-xl transition-all hover:scale-110 border border-white/20 shadow-lg"
           >
             <X className="w-5 h-5 text-white" />
           </button>
 
           <div className="px-6 pb-4">
-            <div className="flex items-end gap-4 -mt-16">
-              <img
-                src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || 'User')}&background=6366f1&color=fff&size=128`}
-                alt={user.displayName || 'User'}
-                className="w-32 h-32 rounded-full border-4 border-slate-900"
-              />
+            <div className="flex items-end gap-4 -mt-20">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-blue-500 rounded-full blur-lg opacity-75 group-hover:opacity-100 transition-opacity animate-pulse"></div>
+                <img
+                  src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || 'User')}&background=FF6D00&color=fff&size=160`}
+                  alt={user.displayName || 'User'}
+                  className="relative w-36 h-36 rounded-full border-4 border-white shadow-2xl group-hover:scale-105 transition-transform"
+                />
+              </div>
               <div className="flex-1 pb-2">
-                <h2 className="text-2xl font-bold text-white">{user.displayName}</h2>
-                {user.bio && <p className="text-sm text-slate-400 mt-1">{user.bio}</p>}
+                <h2 className="text-3xl font-black bg-gradient-to-r from-orange-400 via-pink-400 to-blue-400 bg-clip-text text-transparent animate-shimmer">{user.displayName}</h2>
+                {user.bio && <p className="text-sm text-slate-300 mt-2 font-medium">{user.bio}</p>}
               </div>
               {isOwnProfile ? (
                 <button
                   onClick={onEditProfile}
-                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors flex items-center gap-2"
+                  className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl transition-all flex items-center gap-2 font-bold shadow-lg hover:shadow-orange-500/50 hover:scale-105"
                 >
                   <Edit2 className="w-4 h-4" />
                   Editar Perfil
@@ -76,70 +91,85 @@ export default function UserProfile({
               ) : (
                 <button
                   onClick={onFollowToggle}
-                  className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors"
+                  className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-blue-500/50 hover:scale-105"
                 >
                   Seguir
                 </button>
               )}
             </div>
 
-            {/* Stats */}
-            <div className="flex gap-6 mt-4 text-sm">
-              <div>
-                <span className="text-white font-bold">{userPrompts.length}</span>
-                <span className="text-slate-400 ml-1">Prompts</span>
+            {/* Stats Modernos */}
+            <div className="grid grid-cols-5 gap-3 mt-6">
+              <div className="group relative bg-gradient-to-br from-orange-500/10 to-orange-600/10 backdrop-blur-sm border border-orange-500/30 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative text-center">
+                  <div className="text-2xl font-black bg-gradient-to-r from-orange-400 to-orange-300 bg-clip-text text-transparent">{userPrompts.length}</div>
+                  <div className="text-xs text-orange-300/80 font-semibold mt-0.5">Prompts</div>
+                </div>
               </div>
-              <div>
-                <span className="text-white font-bold">{totalLikes}</span>
-                <span className="text-slate-400 ml-1">Likes</span>
+              <div className="group relative bg-gradient-to-br from-pink-500/10 to-pink-600/10 backdrop-blur-sm border border-pink-500/30 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-pink-500/0 to-pink-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative text-center">
+                  <div className="text-2xl font-black bg-gradient-to-r from-pink-400 to-pink-300 bg-clip-text text-transparent">{totalLikes}</div>
+                  <div className="text-xs text-pink-300/80 font-semibold mt-0.5">Likes</div>
+                </div>
               </div>
-              <div>
-                <span className="text-white font-bold">{totalViews}</span>
-                <span className="text-slate-400 ml-1">Vistas</span>
+              <div className="group relative bg-gradient-to-br from-purple-500/10 to-purple-600/10 backdrop-blur-sm border border-purple-500/30 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative text-center">
+                  <div className="text-2xl font-black bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent">{totalViews}</div>
+                  <div className="text-xs text-purple-300/80 font-semibold mt-0.5">Vistas</div>
+                </div>
               </div>
-              <div>
-                <span className="text-white font-bold">{user.followers?.length || 0}</span>
-                <span className="text-slate-400 ml-1">Seguidores</span>
+              <div className="group relative bg-gradient-to-br from-blue-500/10 to-blue-600/10 backdrop-blur-sm border border-blue-500/30 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative text-center">
+                  <div className="text-2xl font-black bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent">{user.followers?.length || 0}</div>
+                  <div className="text-xs text-blue-300/80 font-semibold mt-0.5">Seguidores</div>
+                </div>
               </div>
-              <div>
-                <span className="text-white font-bold">{user.following?.length || 0}</span>
-                <span className="text-slate-400 ml-1">Siguiendo</span>
+              <div className="group relative bg-gradient-to-br from-cyan-500/10 to-cyan-600/10 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative text-center">
+                  <div className="text-2xl font-black bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">{user.following?.length || 0}</div>
+                  <div className="text-xs text-cyan-300/80 font-semibold mt-0.5">Siguiendo</div>
+                </div>
               </div>
             </div>
 
-            {/* Tabs */}
-            <div className="flex gap-1 mt-6 border-b border-slate-700">
+            {/* Tabs Glassmorphism */}
+            <div className="flex gap-2 mt-6 p-1 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50">
               <button
                 onClick={() => setActiveTab('prompts')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                className={`flex-1 px-4 py-2.5 text-sm font-bold transition-all rounded-lg flex items-center justify-center gap-2 ${
                   activeTab === 'prompts'
-                    ? 'text-indigo-400 border-b-2 border-indigo-400'
-                    : 'text-slate-400 hover:text-slate-300'
+                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/50'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
                 }`}
               >
-                <BookMarked className="w-4 h-4 inline mr-2" />
+                <BookMarked className="w-4 h-4" />
                 Prompts
               </button>
               <button
                 onClick={() => setActiveTab('favorites')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                className={`flex-1 px-4 py-2.5 text-sm font-bold transition-all rounded-lg flex items-center justify-center gap-2 ${
                   activeTab === 'favorites'
-                    ? 'text-indigo-400 border-b-2 border-indigo-400'
-                    : 'text-slate-400 hover:text-slate-300'
+                    ? 'bg-gradient-to-r from-pink-500 to-pink-600 text-white shadow-lg shadow-pink-500/50'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
                 }`}
               >
-                <Heart className="w-4 h-4 inline mr-2" />
+                <Heart className="w-4 h-4" />
                 Favoritos
               </button>
               <button
                 onClick={() => setActiveTab('collections')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                className={`flex-1 px-4 py-2.5 text-sm font-bold transition-all rounded-lg flex items-center justify-center gap-2 ${
                   activeTab === 'collections'
-                    ? 'text-indigo-400 border-b-2 border-indigo-400'
-                    : 'text-slate-400 hover:text-slate-300'
+                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/50'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
                 }`}
               >
-                <Users className="w-4 h-4 inline mr-2" />
+                <Users className="w-4 h-4" />
                 Colecciones
               </button>
             </div>
@@ -152,11 +182,12 @@ export default function UserProfile({
             <div className="space-y-3">
               {userPrompts.length > 0 ? (
                 userPrompts.map((prompt) => (
-                  <div key={prompt.id} className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 hover:border-indigo-500/50 transition-colors">
-                    <div className="flex items-start justify-between">
+                  <div key={prompt.id} className="group relative bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm border-2 border-slate-700/50 rounded-xl p-5 hover:border-orange-500/50 transition-all hover:shadow-lg hover:shadow-orange-500/20 hover:scale-[1.02]">
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="relative flex items-start justify-between">
                       <div className="flex-1 min-w-0 cursor-pointer" onClick={() => onOpenPrompt?.(prompt)}>
-                        <h3 className="font-medium text-white truncate">{prompt.title}</h3>
-                        <p className="text-sm text-slate-400 mt-1 line-clamp-2">{prompt.description}</p>
+                        <h3 className="font-bold text-white truncate group-hover:text-orange-300 transition-colors">{prompt.title}</h3>
+                        <p className="text-sm text-slate-400 mt-1 line-clamp-2 group-hover:text-slate-300 transition-colors">{prompt.description}</p>
                         <div className="flex items-center gap-4 mt-3 text-xs text-slate-500">
                           <span className="flex items-center gap-1">
                             <Heart className="w-3 h-3" />

@@ -267,32 +267,38 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
           width: 100%;
           max-width: 1400px;
           max-height: 95vh;
-          background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+          background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(14, 77, 164, 0.2) 50%, rgba(30, 41, 59, 0.95) 100%);
           border-radius: 2rem;
           overflow: hidden;
           box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
-                      0 0 100px rgba(139, 92, 246, 0.3),
-                      inset 0 0 100px rgba(139, 92, 246, 0.1);
-          border: 1px solid rgba(139, 92, 246, 0.3);
+                      0 0 100px rgba(255, 109, 0, 0.4),
+                      0 0 150px rgba(14, 77, 164, 0.3),
+                      inset 0 0 100px rgba(255, 109, 0, 0.1);
+          border: 2px solid;
+          border-image: linear-gradient(135deg, rgba(255, 109, 0, 0.6), rgba(14, 77, 164, 0.6)) 1;
         }
 
-        /* Header Glassmorphism */
+        /* Header Glassmorphism - Colores Hotmart */
         .modal-header {
           position: sticky;
           top: 0;
           z-index: 10;
-          background: rgba(88, 28, 135, 0.3);
+          background: linear-gradient(135deg, rgba(255, 109, 0, 0.3), rgba(14, 77, 164, 0.3));
           backdrop-filter: blur(20px) saturate(180%);
-          border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+          border-bottom: 2px solid;
+          border-image: linear-gradient(90deg, rgba(255, 109, 0, 0.5), rgba(14, 77, 164, 0.5)) 1;
           padding: 1.5rem;
+          box-shadow: 0 4px 20px rgba(255, 109, 0, 0.2);
         }
 
         .modal-title {
-          background: linear-gradient(to right, #fff, #e9d5ff);
+          background: linear-gradient(90deg, #FF6D00, #FF8C00, #FFB300, #0E4DA4, #1E88E5);
+          background-size: 200% auto;
           background-clip: text;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           animation: shimmer 3s ease-in-out infinite;
+          filter: drop-shadow(0 0 20px rgba(255, 109, 0, 0.5));
         }
 
         .modal-subtitle {
@@ -371,13 +377,14 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
         .category-badge {
           display: inline-block;
           padding: 0.5rem 1rem;
-          background: rgba(139, 92, 246, 0.2);
-          border: 1px solid rgba(139, 92, 246, 0.4);
+          background: linear-gradient(135deg, rgba(14, 77, 164, 0.3), rgba(30, 136, 229, 0.3));
+          border: 2px solid rgba(30, 136, 229, 0.6);
           border-radius: 9999px;
-          color: rgb(196, 181, 253);
+          color: #60D5FD;
           font-size: 0.875rem;
-          font-weight: 600;
+          font-weight: 700;
           backdrop-filter: blur(10px);
+          box-shadow: 0 0 20px rgba(30, 136, 229, 0.3);
         }
 
         .product-badge-gold {
@@ -430,13 +437,16 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
         .purchase-card {
           position: relative;
           padding: 2rem;
-          background: linear-gradient(135deg, rgba(88, 28, 135, 0.4) 0%, rgba(157, 23, 77, 0.4) 100%);
-          border: 2px solid rgba(139, 92, 246, 0.3);
+          background: linear-gradient(135deg, rgba(255, 109, 0, 0.2) 0%, rgba(14, 77, 164, 0.3) 100%);
+          border: 2px solid;
+          border-image: linear-gradient(135deg, rgba(255, 109, 0, 0.6), rgba(14, 77, 164, 0.6)) 1;
           border-radius: 1.5rem;
           backdrop-filter: blur(20px);
           overflow: hidden;
           box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3),
-                      0 0 40px rgba(139, 92, 246, 0.2);
+                      0 0 40px rgba(255, 109, 0, 0.3),
+                      0 0 60px rgba(14, 77, 164, 0.2);
+          animation: card-glow 3s ease-in-out infinite;
         }
 
         .card-shine {
@@ -465,19 +475,21 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
           position: relative;
           width: 100%;
           padding: 1.25rem;
-          background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+          background: linear-gradient(135deg, #FF6D00 0%, #FF8C00 50%, #FFB300 100%);
+          background-size: 200% auto;
           color: white;
-          font-weight: 700;
+          font-weight: 800;
           font-size: 1.125rem;
           border-radius: 1rem;
           overflow: hidden;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+          box-shadow: 0 10px 30px rgba(255, 109, 0, 0.6), 0 0 40px rgba(255, 140, 0, 0.4);
+          animation: gradient-slide 3s ease infinite;
         }
 
         .buy-button:hover {
-          transform: translateY(-2px) scale(1.02);
-          box-shadow: 0 15px 35px rgba(139, 92, 246, 0.6);
+          transform: translateY(-4px) scale(1.05);
+          box-shadow: 0 20px 50px rgba(255, 109, 0, 0.8), 0 0 60px rgba(255, 140, 0, 0.6);
         }
 
         .buy-button:active {
@@ -667,17 +679,19 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
           display: flex;
           align-items: center;
           padding: 0.625rem 1.25rem;
-          background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+          background: linear-gradient(135deg, #FF6D00 0%, #FF8C00 100%);
           color: white;
           font-size: 0.875rem;
-          font-weight: 600;
+          font-weight: 700;
           border-radius: 0.75rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 15px rgba(255, 109, 0, 0.4);
         }
 
         .view-button:hover {
-          transform: translateX(4px);
-          box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+          transform: translateX(4px) scale(1.05);
+          box-shadow: 0 10px 30px rgba(255, 109, 0, 0.7);
+          background: linear-gradient(135deg, #FF8C00 0%, #FFB300 100%);
         }
 
         .card-hover-shine {
@@ -777,6 +791,24 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
         @keyframes gradient {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
+        }
+
+        @keyframes gradient-slide {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+
+        @keyframes card-glow {
+          0%, 100% {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3),
+                        0 0 40px rgba(255, 109, 0, 0.3),
+                        0 0 60px rgba(14, 77, 164, 0.2);
+          }
+          50% {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3),
+                        0 0 60px rgba(255, 109, 0, 0.5),
+                        0 0 80px rgba(14, 77, 164, 0.4);
+          }
         }
 
         .animate-gradient {

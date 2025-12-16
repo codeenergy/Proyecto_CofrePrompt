@@ -11,45 +11,59 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
-  <!-- Monetag Ads - Solo en Producción -->
-  <script>
-    // Detectar si estamos en producción
-    const isProduction = window.location.hostname !== 'localhost' &&
-                        window.location.hostname !== '127.0.0.1' &&
-                        !window.location.hostname.includes('192.168');
-
-    if (isProduction) {
-      // In-Page Push después de 4 segundos
-      setTimeout(() => {
-        const script1 = document.createElement('script');
-        script1.dataset.zone = '10325700';
-        script1.src = 'https://nap5k.com/tag.min.js';
-        script1.async = true;
-        document.body.appendChild(script1);
-        console.log('Monetag In-Page Push cargado');
-      }, 4000);
-
-      // Vignette Banner después de 8 segundos (1 vez por sesión)
-      setTimeout(() => {
-        const sessionKey = 'monetag_vignette_loaded';
-        if (!sessionStorage.getItem(sessionKey)) {
-          const script2 = document.createElement('script');
-          script2.dataset.zone = '10325703';
-          script2.src = 'https://gizokraijaw.net/vignette.min.js';
-          script2.async = true;
-          document.body.appendChild(script2);
-          sessionStorage.setItem(sessionKey, 'true');
-          console.log('Monetag Vignette Banner cargado');
-        }
-      }, 8000);
-    } else {
-      console.log('Monetag: Deshabilitado en desarrollo');
-    }
-  </script>
 </head>
 <body class="bg-background text-slate-200 antialiased selection:bg-primary selection:text-white">
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
+
+  <!-- Monetag Ads - Solo en Producción -->
+  <script>
+    // Detectar si estamos en producción (Vercel, Netlify, dominios personalizados, etc.)
+    const isProduction = window.location.hostname !== 'localhost' &&
+                        window.location.hostname !== '127.0.0.1' &&
+                        !window.location.hostname.includes('192.168') &&
+                        !window.location.hostname.includes('::1');
+
+    console.log('🌐 Hostname:', window.location.hostname);
+    console.log('✅ Modo producción:', isProduction);
+
+    if (isProduction) {
+      // In-Page Push después de 3 segundos
+      setTimeout(() => {
+        try {
+          const script1 = document.createElement('script');
+          script1.dataset.zone = '10325700';
+          script1.src = 'https://nap5k.com/tag.min.js';
+          script1.async = true;
+          document.body.appendChild(script1);
+          console.log('✅ Monetag In-Page Push cargado');
+        } catch (error) {
+          console.error('❌ Error cargando Monetag In-Page Push:', error);
+        }
+      }, 3000);
+
+      // Vignette Banner después de 6 segundos (1 vez por sesión)
+      setTimeout(() => {
+        try {
+          const sessionKey = 'monetag_vignette_loaded';
+          if (!sessionStorage.getItem(sessionKey)) {
+            const script2 = document.createElement('script');
+            script2.dataset.zone = '10325703';
+            script2.src = 'https://gizokraijaw.net/vignette.min.js';
+            script2.async = true;
+            document.body.appendChild(script2);
+            sessionStorage.setItem(sessionKey, 'true');
+            console.log('✅ Monetag Vignette Banner cargado');
+          } else {
+            console.log('ℹ️ Monetag Vignette ya fue mostrado en esta sesión');
+          }
+        } catch (error) {
+          console.error('❌ Error cargando Monetag Vignette:', error);
+        }
+      }, 6000);
+    } else {
+      console.log('🔧 Monetag: Deshabilitado en desarrollo');
+    }
+  </script>
 </body>
 </html>

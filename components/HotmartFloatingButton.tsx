@@ -104,7 +104,7 @@ const HotmartFloatingButton: React.FC = () => {
           animation: slideInBounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* Anillos de pulso */
+        /* Anillos de pulso - Colores Hotmart */
         .pulse-ring {
           position: absolute;
           top: 50%;
@@ -113,7 +113,7 @@ const HotmartFloatingButton: React.FC = () => {
           width: 100%;
           height: 100%;
           border-radius: 9999px;
-          background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(236, 72, 153, 0.4));
+          background: linear-gradient(135deg, rgba(255, 109, 0, 0.5), rgba(14, 77, 164, 0.5));
           animation: pulse-ring 2s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
 
@@ -129,34 +129,36 @@ const HotmartFloatingButton: React.FC = () => {
           animation-delay: 0.8s;
         }
 
-        /* Botón Principal */
+        /* Botón Principal - Colores Hotmart */
         .floating-button {
           position: relative;
           display: flex;
           align-items: center;
           gap: 0.75rem;
           padding: 0.875rem 1.25rem;
-          background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #8b5cf6 100%);
-          background-size: 200% 200%;
+          background: linear-gradient(135deg, #FF6D00 0%, #FF8C00 25%, #0E4DA4 75%, #1E88E5 100%);
+          background-size: 300% 300%;
           border-radius: 9999px;
           box-shadow:
-            0 20px 40px -10px rgba(139, 92, 246, 0.6),
-            0 0 60px rgba(236, 72, 153, 0.4),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+            0 20px 40px -10px rgba(255, 109, 0, 0.7),
+            0 0 60px rgba(255, 140, 0, 0.5),
+            0 0 100px rgba(14, 77, 164, 0.3),
+            inset 0 2px 0 rgba(255, 255, 255, 0.4),
+            inset 0 -2px 0 rgba(0, 0, 0, 0.3);
           transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
           overflow: hidden;
           cursor: pointer;
-          animation: gradient-shift 3s ease infinite, float 3s ease-in-out infinite;
+          animation: gradient-shift 3s ease infinite, float 3s ease-in-out infinite, rainbow-glow 2s ease-in-out infinite;
         }
 
         .floating-button:hover {
-          transform: scale(1.1) rotate(-2deg);
+          transform: scale(1.15) rotate(-3deg);
           box-shadow:
-            0 25px 50px -10px rgba(139, 92, 246, 0.8),
-            0 0 80px rgba(236, 72, 153, 0.6),
-            inset 0 1px 0 rgba(255, 255, 255, 0.4),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+            0 30px 60px -10px rgba(255, 109, 0, 0.9),
+            0 0 100px rgba(255, 140, 0, 0.7),
+            0 0 150px rgba(14, 77, 164, 0.5),
+            inset 0 2px 0 rgba(255, 255, 255, 0.5),
+            inset 0 -2px 0 rgba(0, 0, 0, 0.3);
         }
 
         .floating-button:active {
@@ -262,18 +264,20 @@ const HotmartFloatingButton: React.FC = () => {
           letter-spacing: 1px;
         }
 
-        /* Badge de NUEVO */
+        /* Badge de NUEVO - Color Verde Vibrante */
         .new-badge {
           position: relative;
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 0.375rem 0.625rem;
-          background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
           border-radius: 9999px;
           box-shadow:
-            0 4px 12px rgba(251, 191, 36, 0.4),
+            0 4px 12px rgba(16, 185, 129, 0.6),
+            0 0 20px rgba(16, 185, 129, 0.4),
             inset 0 1px 0 rgba(255, 255, 255, 0.3);
+          animation: badge-pulse 2s ease-in-out infinite;
         }
 
         .badge-ping {
@@ -520,6 +524,26 @@ const HotmartFloatingButton: React.FC = () => {
           }
           50% {
             transform: translateY(-4px) rotate(10deg);
+          }
+        }
+
+        @keyframes rainbow-glow {
+          0%, 100% {
+            filter: hue-rotate(0deg) brightness(1);
+          }
+          50% {
+            filter: hue-rotate(20deg) brightness(1.2);
+          }
+        }
+
+        @keyframes badge-pulse {
+          0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.6), 0 0 20px rgba(16, 185, 129, 0.4);
+          }
+          50% {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.8), 0 0 30px rgba(16, 185, 129, 0.6);
           }
         }
       `}</style>
