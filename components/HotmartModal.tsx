@@ -126,17 +126,19 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
                       <div className="card-shine" />
 
                       <div className="text-center mb-6">
-                        {selectedProduct.originalPrice && (
-                          <p className="text-slate-400 line-through text-xl mb-2">{selectedProduct.originalPrice}</p>
-                        )}
-                        <p className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 mb-3 animate-gradient">
-                          {selectedProduct.price}
+                        <div className="relative inline-block mb-4">
+                          <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-orange-600 to-orange-500 blur-2xl opacity-60 animate-pulse"></div>
+                          <div className="relative text-5xl md:text-6xl font-black">🎁</div>
+                        </div>
+                        <h3 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-300 to-blue-400 mb-3 animate-gradient">
+                          ¡OFERTA ESPECIAL!
+                        </h3>
+                        <p className="text-slate-300 text-base mb-2">
+                          Descubre el precio exclusivo y accede al contenido completo
                         </p>
-                        {selectedProduct.originalPrice && (
-                          <div className="discount-badge">
-                            🔥 ¡{Math.round((1 - parseInt(selectedProduct.price.replace('$', '')) / parseInt(selectedProduct.originalPrice.replace('$', ''))) * 100)}% OFF!
-                          </div>
-                        )}
+                        <div className="discount-badge">
+                          🔥 DESCUENTO LIMITADO DISPONIBLE
+                        </div>
                       </div>
 
                       <button
@@ -145,8 +147,8 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
                       >
                         <span className="button-shine" />
                         <span className="relative z-10 flex items-center justify-center gap-2">
-                          <span className="text-2xl">🎁</span>
-                          COMPRAR AHORA
+                          <span className="text-2xl">🚀</span>
+                          VER OFERTA COMPLETA
                         </span>
                       </button>
 
@@ -211,16 +213,14 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
                         {product.shortDescription}
                       </p>
 
-                      {/* Precio y CTA */}
+                      {/* CTA */}
                       <div className="product-footer">
-                        <div>
-                          {product.originalPrice && (
-                            <p className="text-xs text-slate-500 line-through">{product.originalPrice}</p>
-                          )}
-                          <p className="product-price">{product.price}</p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">🎯</span>
+                          <span className="text-white font-bold text-sm">OFERTA ESPECIAL</span>
                         </div>
                         <button className="view-button">
-                          Ver más
+                          Ver oferta
                           <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
@@ -667,12 +667,8 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
           display: flex;
           align-items: center;
           justify-content: space-between;
-        }
-
-        .product-price {
-          color: white;
-          font-size: 1.875rem;
-          font-weight: 800;
+          padding-top: 0.75rem;
+          border-top: 1px solid rgba(139, 92, 246, 0.2);
         }
 
         .view-button {

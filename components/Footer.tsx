@@ -9,53 +9,115 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ onOpenLegal, onPresetFilter }) => {
   return (
-    <footer className="bg-slate-950 border-t border-slate-800/50 py-4 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <footer className="relative bg-gradient-to-b from-slate-900/95 to-slate-950/95 backdrop-blur-xl border-t-2 border-orange-500/20 py-6 px-4 shadow-2xl shadow-orange-500/10">
+      {/* Animated gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-orange-600/5 via-blue-600/5 to-purple-600/5 animate-gradient-shift pointer-events-none" />
 
-          {/* Brand */}
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-md flex items-center justify-center">
-              <span className="text-white font-bold text-xs">C</span>
+      <div className="relative max-w-7xl mx-auto z-10">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+
+          {/* Brand con efectos modernos */}
+          <div className="flex items-center gap-3 group">
+            <div className="relative">
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-blue-600 rounded-xl blur-lg opacity-60 group-hover:opacity-100 transition-opacity duration-300 animate-pulse-slow" />
+
+              <div className="relative w-8 h-8 bg-gradient-to-br from-orange-500 via-orange-600 to-blue-600 rounded-xl flex items-center justify-center shadow-xl shadow-orange-500/50 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                <span className="text-white font-black text-sm drop-shadow-lg">C</span>
+              </div>
             </div>
-            <span className="text-sm font-semibold text-white">CofrePrompt</span>
-            <span className="text-xs text-slate-500 hidden sm:inline">© 2024</span>
+            <div>
+              <span className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-300 to-blue-400 drop-shadow-lg">
+                CofrePrompt
+              </span>
+              <span className="block text-xs text-slate-400 font-semibold">© 2025 - Powered by AI</span>
+            </div>
           </div>
 
-          {/* Quick filters */}
-          <div className="flex items-center gap-1 text-xs">
-            <span className="text-slate-500 mr-2 hidden sm:inline">Explorar:</span>
-            <button onClick={() => onPresetFilter('BEST')} className="px-2 py-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors">
+          {/* Quick filters modernos */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-orange-300 mr-2 hidden sm:inline font-black">🔥 Explorar:</span>
+            <button
+              onClick={() => onPresetFilter('BEST')}
+              className="px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/60 hover:bg-gradient-to-r hover:from-orange-500/30 hover:to-blue-500/30 rounded-lg transition-all duration-300 hover:scale-105 border border-slate-700/50 hover:border-orange-500/50 backdrop-blur-sm"
+            >
               Populares
             </button>
-            <button onClick={() => onPresetFilter('NEW')} className="px-2 py-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors">
+            <button
+              onClick={() => onPresetFilter('NEW')}
+              className="px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/60 hover:bg-gradient-to-r hover:from-blue-500/30 hover:to-purple-500/30 rounded-lg transition-all duration-300 hover:scale-105 border border-slate-700/50 hover:border-blue-500/50 backdrop-blur-sm"
+            >
               Nuevos
             </button>
-            <button onClick={() => onPresetFilter('ART')} className="px-2 py-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors">
+            <button
+              onClick={() => onPresetFilter('ART')}
+              className="px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/60 hover:bg-gradient-to-r hover:from-purple-500/30 hover:to-pink-500/30 rounded-lg transition-all duration-300 hover:scale-105 border border-slate-700/50 hover:border-purple-500/50 backdrop-blur-sm"
+            >
               Arte
             </button>
-            <button onClick={() => onPresetFilter('CODE')} className="px-2 py-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors">
+            <button
+              onClick={() => onPresetFilter('CODE')}
+              className="px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/60 hover:bg-gradient-to-r hover:from-green-500/30 hover:to-emerald-500/30 rounded-lg transition-all duration-300 hover:scale-105 border border-slate-700/50 hover:border-green-500/50 backdrop-blur-sm"
+            >
               Código
             </button>
           </div>
 
-          {/* Legal links */}
-          <div className="flex items-center gap-3 text-xs text-slate-500">
-            <button onClick={() => onOpenLegal('PRIVACY')} className="hover:text-slate-300 transition-colors">
+          {/* Legal links modernos */}
+          <div className="flex items-center gap-4 text-xs">
+            <button
+              onClick={() => onOpenLegal('PRIVACY')}
+              className="text-slate-400 hover:text-orange-400 transition-all duration-300 font-semibold hover:scale-110"
+            >
               Privacidad
             </button>
             <span className="text-slate-700">•</span>
-            <button onClick={() => onOpenLegal('TERMS')} className="hover:text-slate-300 transition-colors">
+            <button
+              onClick={() => onOpenLegal('TERMS')}
+              className="text-slate-400 hover:text-blue-400 transition-all duration-300 font-semibold hover:scale-110"
+            >
               Términos
             </button>
             <span className="text-slate-700">•</span>
-            <button onClick={() => onOpenLegal('CONTACT')} className="hover:text-slate-300 transition-colors">
+            <button
+              onClick={() => onOpenLegal('CONTACT')}
+              className="text-slate-400 hover:text-purple-400 transition-all duration-300 font-semibold hover:scale-110"
+            >
               Contacto
             </button>
           </div>
 
         </div>
+
+        {/* Línea decorativa con gradiente */}
+        <div className="mt-6 pt-4 border-t border-orange-500/10">
+          <p className="text-center text-xs text-slate-500">
+            Hecho con <span className="text-red-500 animate-pulse">❤️</span> por desarrolladores para desarrolladores
+          </p>
+        </div>
       </div>
+
+      {/* Estilos CSS personalizados */}
+      <style>{`
+        @keyframes gradient-shift {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; }
+        }
+
+        .animate-gradient-shift {
+          background-size: 200% 200%;
+          animation: gradient-shift 6s ease infinite;
+        }
+
+        .animate-pulse-slow {
+          animation: pulse-slow 3s ease-in-out infinite;
+        }
+      `}</style>
     </footer>
   );
 };
