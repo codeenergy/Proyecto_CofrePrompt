@@ -33,7 +33,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenLegal, onPresetFilter }) => {
               <span className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-300 to-blue-400 drop-shadow-lg">
                 CofrePrompt
               </span>
-              <span className="block text-xs text-slate-400 font-semibold">© 2025 - Powered by AI</span>
+              <span className="block text-xs text-slate-400 font-semibold">© 2025</span>
             </div>
           </div>
 
