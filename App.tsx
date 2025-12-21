@@ -14,6 +14,7 @@ import SkeletonCard from './components/SkeletonCard';
 import MonetagAdsProvider from './components/MonetagAdsProvider';
 import MonetagDirectLink from './components/MonetagDirectLink';
 import HotmartFloatingButton from './components/HotmartFloatingButton';
+import { LanguageProvider } from './i18n/LanguageContext';
 import { Category, Platform, Prompt, User, Comment, Collection, Notification } from './types';
 import { MOCK_PROMPTS } from './constants';
 import {
@@ -340,8 +341,9 @@ function App() {
   };
 
   return (
-    <MonetagAdsProvider>
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
+    <LanguageProvider>
+      <MonetagAdsProvider>
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
         <Navbar
         user={user}
         setUser={setUser}
@@ -504,8 +506,9 @@ function App() {
 
         {/* Botón Flotante de Hotmart */}
         <HotmartFloatingButton />
-      </div>
-    </MonetagAdsProvider>
+        </div>
+      </MonetagAdsProvider>
+    </LanguageProvider>
   );
 }
 

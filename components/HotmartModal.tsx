@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { HOTMART_PRODUCTS, HOTMART_CONFIG, HotmartProduct } from '../config/hotmart.config';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface HotmartModalProps {
   isOpen: boolean;
@@ -7,6 +8,7 @@ interface HotmartModalProps {
 }
 
 const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
+  const { t } = useLanguage();
   const [selectedProduct, setSelectedProduct] = useState<HotmartProduct | null>(null);
 
   if (!isOpen) return null;
@@ -46,10 +48,10 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
                 )}
                 <div>
                   <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-2 modal-title">
-                    {selectedProduct ? selectedProduct.title : HOTMART_CONFIG.modalTitle}
+                    {selectedProduct ? selectedProduct.title : t.hotmart.recommendedProducts}
                   </h2>
                   {!selectedProduct && (
-                    <p className="text-sm text-purple-200 mt-1 modal-subtitle">{HOTMART_CONFIG.modalSubtitle}</p>
+                    <p className="text-sm text-purple-200 mt-1 modal-subtitle">{t.hotmart.subtitle}</p>
                   )}
                 </div>
               </div>
@@ -104,7 +106,7 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
                     <div className="features-section">
                       <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                         <span className="text-2xl">✨</span>
-                        Lo que incluye:
+                        {t.hotmart.highlights}
                       </h3>
                       <div className="features-grid">
                         {selectedProduct.highlights.map((highlight, index) => (
@@ -131,13 +133,13 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
                           <div className="relative text-5xl md:text-6xl font-black">🎁</div>
                         </div>
                         <h3 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-300 to-blue-400 mb-3 animate-gradient">
-                          ¡OFERTA ESPECIAL!
+                          {t.hotmart.specialOffer}
                         </h3>
                         <p className="text-slate-300 text-base mb-2">
-                          Descubre el precio exclusivo y accede al contenido completo
+                          {t.hotmart.discoverPrice}
                         </p>
                         <div className="discount-badge">
-                          🔥 DESCUENTO LIMITADO DISPONIBLE
+                          {t.hotmart.limitedDiscount}
                         </div>
                       </div>
 
@@ -148,7 +150,7 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
                         <span className="button-shine" />
                         <span className="relative z-10 flex items-center justify-center gap-2">
                           <span className="text-2xl">🚀</span>
-                          VER OFERTA COMPLETA
+                          {t.hotmart.viewFullOffer}
                         </span>
                       </button>
 
@@ -156,7 +158,7 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
                         <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
-                        Pago 100% Seguro • Garantía de 7 días
+                        {t.hotmart.securePayment}
                       </p>
                     </div>
                   </div>

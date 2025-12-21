@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 type LegalView = 'PRIVACY' | 'TERMS' | 'COOKIES' | 'CONTACT';
 
@@ -8,6 +9,8 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ onOpenLegal, onPresetFilter }) => {
+  const { t } = useLanguage();
+
   return (
     <footer className="relative bg-gradient-to-b from-slate-900/95 to-slate-950/95 backdrop-blur-xl border-t-2 border-orange-500/20 py-6 px-4 shadow-2xl shadow-orange-500/10">
       {/* Animated gradient overlay */}
@@ -36,30 +39,30 @@ const Footer: React.FC<FooterProps> = ({ onOpenLegal, onPresetFilter }) => {
 
           {/* Quick filters modernos */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-orange-300 mr-2 hidden sm:inline font-black">🔥 Explorar:</span>
+            <span className="text-xs text-orange-300 mr-2 hidden sm:inline font-black">{t.footer.explore}</span>
             <button
               onClick={() => onPresetFilter('BEST')}
               className="px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/60 hover:bg-gradient-to-r hover:from-orange-500/30 hover:to-blue-500/30 rounded-lg transition-all duration-300 hover:scale-105 border border-slate-700/50 hover:border-orange-500/50 backdrop-blur-sm"
             >
-              Populares
+              {t.footer.popular}
             </button>
             <button
               onClick={() => onPresetFilter('NEW')}
               className="px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/60 hover:bg-gradient-to-r hover:from-blue-500/30 hover:to-purple-500/30 rounded-lg transition-all duration-300 hover:scale-105 border border-slate-700/50 hover:border-blue-500/50 backdrop-blur-sm"
             >
-              Nuevos
+              {t.footer.new}
             </button>
             <button
               onClick={() => onPresetFilter('ART')}
               className="px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/60 hover:bg-gradient-to-r hover:from-purple-500/30 hover:to-pink-500/30 rounded-lg transition-all duration-300 hover:scale-105 border border-slate-700/50 hover:border-purple-500/50 backdrop-blur-sm"
             >
-              Arte
+              {t.footer.art}
             </button>
             <button
               onClick={() => onPresetFilter('CODE')}
               className="px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/60 hover:bg-gradient-to-r hover:from-green-500/30 hover:to-emerald-500/30 rounded-lg transition-all duration-300 hover:scale-105 border border-slate-700/50 hover:border-green-500/50 backdrop-blur-sm"
             >
-              Código
+              {t.footer.code}
             </button>
           </div>
 
@@ -69,21 +72,21 @@ const Footer: React.FC<FooterProps> = ({ onOpenLegal, onPresetFilter }) => {
               onClick={() => onOpenLegal('PRIVACY')}
               className="text-slate-400 hover:text-orange-400 transition-all duration-300 font-semibold hover:scale-110"
             >
-              Privacidad
+              {t.footer.privacy}
             </button>
             <span className="text-slate-700">•</span>
             <button
               onClick={() => onOpenLegal('TERMS')}
               className="text-slate-400 hover:text-blue-400 transition-all duration-300 font-semibold hover:scale-110"
             >
-              Términos
+              {t.footer.terms}
             </button>
             <span className="text-slate-700">•</span>
             <button
               onClick={() => onOpenLegal('CONTACT')}
               className="text-slate-400 hover:text-purple-400 transition-all duration-300 font-semibold hover:scale-110"
             >
-              Contacto
+              {t.footer.contact}
             </button>
           </div>
 
@@ -92,7 +95,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenLegal, onPresetFilter }) => {
         {/* Línea decorativa con gradiente */}
         <div className="mt-6 pt-4 border-t border-orange-500/10">
           <p className="text-center text-xs text-slate-500">
-            Hecho con <span className="text-red-500 animate-pulse">❤️</span> por desarrolladores para desarrolladores
+            {t.footer.madeWith} <span className="text-red-500 animate-pulse">❤️</span> {t.footer.forDevelopers}
           </p>
         </div>
       </div>

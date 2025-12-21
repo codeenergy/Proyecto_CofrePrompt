@@ -1,7 +1,8 @@
 import React from 'react';
 import { User, Notification } from '../types';
-import { Search, Menu, LogOut, Plus } from 'lucide-react';
+import { Search, Menu, LogOut, Plus, Globe } from 'lucide-react';
 import { signInWithGoogle, logoutUser } from '../services/firebase';
+import { useLanguage } from '../i18n/LanguageContext';
 import ThemeToggle from './ThemeToggle';
 import NotificationBell from './NotificationBell';
 
@@ -32,6 +33,8 @@ const Navbar: React.FC<NavbarProps> = ({
   onMarkAllNotificationsAsRead = () => {},
   onClearNotification = () => {}
 }) => {
+  const { language, setLanguage, t } = useLanguage();
+
   const handleLogin = async () => {
     try {
       const loggedInUser = await signInWithGoogle();
@@ -94,7 +97,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full h-11 pl-12 pr-4 bg-slate-800/60 backdrop-blur-xl border border-slate-700/50 group-focus-within:border-orange-500/50 rounded-2xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 transition-all duration-300 shadow-lg shadow-black/20"
-                  placeholder="🔍 Buscar prompts increíbles..."
+                  placeholder={t.navbar.search}
                 />
 
                 {/* Animated border */}
@@ -105,6 +108,18 @@ const Navbar: React.FC<NavbarProps> = ({
 
           {/* Actions - Rediseñados */}
           <div className="flex items-center gap-2 shrink-0">
+            {/* Language Selector */}
+            <div className="relative group/lang">
+              <button
+                onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
+                className="h-11 px-3 flex items-center gap-2 bg-slate-800/60 backdrop-blur-xl hover:bg-slate-700/60 border border-slate-700/50 hover:border-orange-500/50 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg group"
+                title={language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+              >
+                <Globe size={18} className="text-orange-400 group-hover:text-orange-300 transition-colors duration-300" />
+                <span className="text-sm font-bold text-white uppercase">{language}</span>
+              </button>
+            </div>
+
             {/* Theme Toggle */}
             <ThemeToggle />
 
@@ -127,7 +142,7 @@ const Navbar: React.FC<NavbarProps> = ({
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
 
               <Plus size={18} className="relative z-10 group-hover:rotate-90 transition-transform duration-300" />
-              <span className="hidden sm:inline relative z-10">Crear</span>
+              <span className="hidden sm:inline relative z-10">{t.navbar.create}</span>
             </button>
 
             {/* Auth */}
@@ -136,7 +151,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 <button
                   onClick={onOpenProfile}
                   className="relative group/avatar"
-                  title="Ver perfil"
+                  title={t.navbar.profile}
                 >
                   {/* Glow effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-blue-600 rounded-full blur-md opacity-0 group-hover/avatar:opacity-75 transition-opacity duration-300" />
@@ -151,7 +166,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 <button
                   onClick={handleLogout}
                   className="p-2.5 rounded-xl bg-slate-800/60 backdrop-blur-xl hover:bg-red-500/20 text-slate-400 hover:text-red-400 border border-slate-700/50 hover:border-red-500/50 transition-all duration-300 hover:scale-110 shadow-lg"
-                  title="Cerrar Sesión"
+                  title={t.navbar.logout}
                 >
                   <LogOut size={18} />
                 </button>
@@ -163,7 +178,7 @@ const Navbar: React.FC<NavbarProps> = ({
               >
                 {/* Animated shine */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                <span className="relative z-10">Entrar</span>
+                <span className="relative z-10">{t.navbar.login}</span>
               </button>
             )}
           </div>

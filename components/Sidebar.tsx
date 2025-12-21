@@ -1,6 +1,7 @@
 import React from 'react';
 import { Category, Platform } from '../types';
 import { LayoutGrid, Code, Palette, Megaphone, PenTool, Briefcase, Sparkles, X } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -33,6 +34,8 @@ const PLATFORM_COLORS: Record<string, string> = {
 const Sidebar: React.FC<SidebarProps> = ({
   isOpen, closeMobile, selectedCategory, onSelectCategory, selectedPlatform, onSelectPlatform
 }) => {
+  const { t } = useLanguage();
+
   return (
     <>
       {/* Mobile overlay */}
@@ -60,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
           {/* Categories */}
           <div>
-            <h3 className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-blue-400 uppercase tracking-wider mb-3 px-2">Categorías</h3>
+            <h3 className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-blue-400 uppercase tracking-wider mb-3 px-2">{t.sidebar.categories}</h3>
             <div className="space-y-1.5">
               {Object.values(Category).map((cat) => (
                 <button
@@ -93,7 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
           {/* Platforms */}
           <div>
-            <h3 className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 uppercase tracking-wider mb-3 px-2">Plataforma</h3>
+            <h3 className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 uppercase tracking-wider mb-3 px-2">{t.sidebar.platform}</h3>
             <div className="space-y-1.5">
               {['All', ...Object.values(Platform)].map((plat) => (
                 <button
@@ -115,7 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <span className={`block w-3 h-3 rounded-full ${PLATFORM_COLORS[plat]} ${selectedPlatform === plat ? 'animate-pulse shadow-lg' : ''}`}></span>
                   </span>
 
-                  <span className="relative z-10">{plat === 'All' ? 'Todas' : plat}</span>
+                  <span className="relative z-10">{plat === 'All' ? t.sidebar.all : plat}</span>
 
                   {/* Shine effect on hover */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
@@ -136,12 +139,12 @@ const Sidebar: React.FC<SidebarProps> = ({
               <div className="relative z-10">
                 <p className="text-xs text-orange-300 uppercase tracking-wide font-black mb-2 flex items-center gap-2">
                   <span className="text-xl">🚀</span>
-                  Total Prompts
+                  {t.sidebar.totalPrompts}
                 </p>
                 <p className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-300 to-blue-400 mb-2">1,248</p>
                 <div className="flex items-center gap-2">
                   <span className="text-xs px-2 py-1 bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 text-emerald-300 rounded-lg border border-emerald-500/30 font-bold">
-                    +23 esta semana
+                    +23 {t.sidebar.thisWeek}
                   </span>
                   <span className="text-emerald-400 animate-pulse">📈</span>
                 </div>
