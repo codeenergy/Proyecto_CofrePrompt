@@ -35,42 +35,42 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-slate-900 border border-orange-500/30 w-full max-w-6xl max-h-[90vh] rounded-lg overflow-hidden flex flex-col">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
+        <div className="bg-slate-900 border border-orange-500/30 w-full max-w-6xl max-h-[95vh] sm:max-h-[90vh] rounded-lg overflow-hidden flex flex-col">
 
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-slate-800">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between p-3 sm:p-4 border-b border-slate-800">
+            <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
               {selectedProduct && (
                 <button
                   onClick={handleBack}
-                  className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+                  className="p-1.5 sm:p-2 hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0"
                 >
-                  <ArrowLeft size={20} className="text-white" />
+                  <ArrowLeft size={18} className="sm:w-5 sm:h-5 text-white" />
                 </button>
               )}
-              <div>
-                <h2 className="text-2xl font-bold text-white">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-base sm:text-xl md:text-2xl font-bold text-white truncate">
                   {selectedProduct ? selectedProduct.title : t.hotmart.recommendedProducts}
                 </h2>
                 {!selectedProduct && (
-                  <p className="text-sm text-slate-400 mt-1">{t.hotmart.subtitle}</p>
+                  <p className="text-xs sm:text-sm text-slate-400 mt-0.5 sm:mt-1 line-clamp-1 sm:line-clamp-none">{t.hotmart.subtitle}</p>
                 )}
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+              className="p-1.5 sm:p-2 hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0"
             >
-              <X size={20} className="text-white" />
+              <X size={18} className="sm:w-5 sm:h-5 text-white" />
             </button>
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
             {selectedProduct ? (
               // Vista Individual del Producto
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Video */}
                 <div className="aspect-video rounded-lg overflow-hidden bg-black">
                   <iframe
@@ -85,7 +85,7 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Info */}
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                   {/* Descripción */}
                   <div className="md:col-span-2 space-y-4">
                     <div className="flex items-center gap-3">
@@ -121,7 +121,7 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
 
                   {/* Card de Compra */}
                   <div className="md:col-span-1">
-                    <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 space-y-4 sticky top-4">
+                    <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 sm:p-6 space-y-3 sm:space-y-4 md:sticky md:top-4">
                       <div className="text-center space-y-3">
                         <div className="text-5xl">🎁</div>
                         <h3 className="text-xl font-bold bg-gradient-to-r from-orange-400 to-blue-400 bg-clip-text text-transparent">
@@ -152,7 +152,7 @@ const HotmartModal: React.FC<HotmartModalProps> = ({ isOpen, onClose }) => {
               </div>
             ) : (
               // Grid de Productos
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                 {HOTMART_PRODUCTS.map((product) => (
                   <button
                     key={product.id}

@@ -99,7 +99,7 @@ export default function UserProfile({
             </div>
 
             {/* Stats Modernos */}
-            <div className="grid grid-cols-5 gap-3 mt-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mt-6">
               <div className="group relative bg-gradient-to-br from-orange-500/10 to-orange-600/10 backdrop-blur-sm border border-orange-500/30 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative text-center">

@@ -1,5 +1,5 @@
 {
   "name": "CofrePrompt",
-  "description": "A modern, monetized library for AI Prompts featuring Google Auth integration and AdSense support.",
+  "description": "A modern library for AI Prompts featuring Google Auth integration and curated product recommendations.",
   "requestFramePermissions": []
 }

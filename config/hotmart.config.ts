@@ -23,122 +23,122 @@ export interface HotmartProduct {
 export const HOTMART_PRODUCTS: HotmartProduct[] = [
   {
     id: '1',
-    title: '💰 Sistema de Afiliados: Genera Ingresos Pasivos',
-    shortDescription: 'Aprende a generar ingresos recurrentes con marketing de afiliados',
-    description: 'Descubre el sistema completo para convertirte en afiliado exitoso. Aprende a seleccionar productos ganadores, crear contenido que convierte, dominar el tráfico orgánico y pagado, y construir un negocio digital 100% automatizado. Incluye estrategias de email marketing, embudos de venta y métricas clave para escalar tus comisiones. Con este método ya han generado más de $500K en comisiones.',
-    youtubeVideoId: '4qQBR7SN9ZU', // Video real sobre marketing de afiliados
-    imageUrl: 'https://images.unsplash.com/photo-1579621970795-87facc2f976d?auto=format&fit=crop&q=80&w=800',
+    title: '🍰 230+ Recetas de Postres',
+    shortDescription: 'Aprende a preparar postres deliciosos sin horno',
+    description: 'Aprende a preparar postres deliciosos sin horno, con coberturas exquisitas y más. Curso completo con recetas paso a paso, trucos profesionales y técnicas de decoración. Ideal para emprendedores que quieren iniciar su negocio de repostería o para quienes desean sorprender a su familia con deliciosos postres caseros.',
+    youtubeVideoId: 'VKHFZhLX5i8',
+    imageUrl: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&q=80&w=800',
     affiliateLink: 'https://go.hotmart.com/E103121102Q?dp=1',
-    category: '💰 Marketing de Afiliados',
+    category: '🍰 Repostería',
     highlights: [
-      'Método probado con +500K generados',
-      'Tráfico orgánico y pagado',
-      'Embudos listos para usar',
-      'Grupo privado de afiliados'
+      '230+ recetas sin horno',
+      'Coberturas exquisitas',
+      'Videos paso a paso',
+      'Técnicas profesionales'
     ],
     badge: '🔥 MÁS VENDIDO'
   },
   {
     id: '2',
-    title: '🤖 IA para Emprendedores: Automatización Total',
-    shortDescription: 'Domina ChatGPT, Claude y herramientas IA para multiplicar tu productividad',
-    description: 'Curso definitivo de Inteligencia Artificial aplicada a negocios. Aprende a automatizar creación de contenido, servicio al cliente, análisis de datos, generación de imágenes profesionales y mucho más. Incluye más de 1000 prompts probados, plantillas de automatización con Make y Zapier, y casos de éxito reales. Ahorra 20+ horas semanales automatizando tareas repetitivas.',
-    youtubeVideoId: 'sTeoEFzVNSc', // Video sobre automatización con IA
-    imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800',
+    title: '💰 Libertad Financiera',
+    shortDescription: 'Deja tu empleo sin consecuencias financieras',
+    description: 'Deja tu empleo sin consecuencias financieras. Guía completa de 213 páginas con estrategias probadas para alcanzar la libertad financiera. Aprende a crear múltiples fuentes de ingresos, invertir inteligentemente y construir un patrimonio sólido que te permita vivir la vida que siempre soñaste.',
+    youtubeVideoId: 'mOhzl98NqIw',
+    imageUrl: 'https://images.unsplash.com/photo-1579621970795-87facc2f976d?auto=format&fit=crop&q=80&w=800',
     affiliateLink: 'https://go.hotmart.com/A101639222W?dp=1',
-    category: '🤖 Inteligencia Artificial',
+    category: '💰 Finanzas Personales',
     highlights: [
-      '1000+ prompts profesionales',
-      'Automatización con Make/Zapier',
-      'Casos de éxito documentados',
-      'Actualizaciones semanales IA'
+      'eBook de 213 páginas',
+      'Estrategias probadas',
+      'Múltiples fuentes de ingresos',
+      'Plan de acción completo'
     ],
-    badge: '⚡ OFERTA LIMITADA'
+    badge: '⚡ eBook Premium'
   },
   {
     id: '3',
-    title: '🛍️ E-commerce desde Cero: Tienda Rentable en 30 Días',
-    shortDescription: 'Monta tu tienda online profesional y empieza a vender hoy',
-    description: 'Método completo para crear una tienda virtual rentable sin inventario. Aprende dropshipping nacional e internacional, negociación con proveedores, estrategias de producto ganador, diseño de tienda profesional en Shopify/Nuvemshop, y campañas de Meta Ads que convierten. Incluye 50+ productos validados, scripts de anuncios probados, y acceso a grupo privado con mentorías semanales en vivo.',
-    youtubeVideoId: 'mBJKJNMcBV4', // Video sobre ecommerce
-    imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=800',
+    title: '💎 Diseña con Resina Epoxi',
+    shortDescription: 'Crea joyería, llaveros y accesorios únicos',
+    description: 'Crea joyería, llaveros y accesorios únicos. De principiante a experto. Aprende todas las técnicas de trabajo con resina epoxi, desde lo más básico hasta proyectos avanzados. Incluye lista de proveedores, moldes recomendados y trucos para lograr acabados profesionales.',
+    youtubeVideoId: 'JnStWI4Vf7A',
+    imageUrl: 'https://images.unsplash.com/photo-1611085583191-a3b181a88401?auto=format&fit=crop&q=80&w=800',
     affiliateLink: 'https://go.hotmart.com/K101644464P?dp=1',
-    category: '🛒 E-commerce',
+    category: '💎 Manualidades',
     highlights: [
-      '50+ productos validados',
-      'Proveedores nacionales e internacionales',
-      'Scripts de anuncios ganadores',
-      'Mentorías semanales en vivo'
+      'De principiante a experto',
+      'Lista de proveedores',
+      'Acceso de por vida',
+      'Técnicas avanzadas'
     ],
-    badge: '🌟 MÉTODO 2025'
+    badge: '🌟 ACCESO VITALICIO'
   },
   {
     id: '4',
-    title: '📊 Day Trade do Zero: Opere na Bolsa com Segurança',
-    shortDescription: 'Aprenda estratégias comprovadas de day trade e swing trade',
-    description: 'Formação completa em Day Trade e Swing Trade para iniciantes e intermediários. Domine análisis técnico avançado, gestão de risco profissional, leitura de tape reading, estrategias de scalping e position, e psicología do trader vencedor. Inclui sala ao vivo diária, indicadores personalizados para TradingView, e suporte direto com traders profissionais. Mais de 3.000 alunos operando com lucro consistente.',
-    youtubeVideoId: 'sLqYJCDmW9c', // Video sobre day trade
-    imageUrl: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=800',
+    title: '🕯️ Velas Artesanales Pro',
+    shortDescription: 'Domina el arte de crear velas decorativas',
+    description: 'Domina el arte de crear velas decorativas. Incluye lista de proveedores. Aprende a elaborar velas aromáticas, decorativas y terapéuticas con acabado profesional. Curso certificado que te enseña desde cómo elegir las mejores ceras hasta técnicas avanzadas de diseño y decoración.',
+    youtubeVideoId: 'xFEp87KxEK0',
+    imageUrl: 'https://images.unsplash.com/photo-1602874801006-e747926f4a57?auto=format&fit=crop&q=80&w=800',
     affiliateLink: 'https://go.hotmart.com/E103136583X?dp=1',
-    category: '📊 Trading & Investimentos',
+    category: '🕯️ Artesanías',
     highlights: [
-      'Sala ao vivo diária',
-      'Indicadores TradingView inclusos',
-      '+3000 alunos lucrando',
-      'Gestão de risco profissional'
+      'Curso certificado',
+      'Lista de proveedores',
+      'Técnicas profesionales',
+      'Velas aromáticas y decorativas'
     ],
-    badge: '💰 VALIDADO'
+    badge: '💰 CURSO CERTIFICADO'
   },
   {
     id: '5',
-    title: '✍️ Copy Persuasivo: Escreva Textos que Vendem',
-    shortDescription: 'Domina a arte de vender com palavras e multiplique suas conversões',
-    description: 'Curso completo de Copywriting Persuasivo do zero ao avançado. Aprenda fórmulas comprovadas (AIDA, PAS, FAB), gatilhos mentais poderosos, storytelling que vende, headlines que capturam atenção, e emails que convertem. Inclui swipe file com +500 copies vencedores, templates prontos para VSL, páginas de vendas e anúncios, além de análise personalizada dos seus textos. Já gerou mais de R$ 10M em vendas para alunos.',
-    youtubeVideoId: 'bQw3fP_Lcx8', // Video sobre copywriting
-    imageUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&q=80&w=800',
+    title: '💇 Extensiones V-Light',
+    shortDescription: 'Certificación profesional en extensiones de cabello',
+    description: 'Certificación profesional en extensiones de cabello. Duración hasta 4 meses. Programa completo que te enseña la técnica V-Light desde cero, con práctica supervisada, materiales incluidos y certificación oficial al finalizar. Conviértete en una profesional de las extensiones capilares.',
+    youtubeVideoId: 'rCcPF0cRSFI',
+    imageUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=800',
     affiliateLink: 'https://go.hotmart.com/Q101638891S?dp=1',
-    category: '✍️ Copywriting',
+    category: '💇 Belleza Profesional',
     highlights: [
-      'Swipe file com +500 exemplos',
-      'Templates VSL e páginas de venda',
-      'Análise personalizada de copies',
-      'R$ 10M+ gerados por alunos'
+      'Certificación oficial',
+      'Duración hasta 4 meses',
+      'Práctica supervisada',
+      'Materiales incluidos'
     ],
-    badge: '🔥 TOP VENDAS'
+    badge: '🔥 PROGRAMA COMPLETO'
   },
   {
     id: '6',
-    title: '🎨 Design Gráfico Profissional: Do Zero ao Avançado',
-    shortDescription: 'Crie designs incríveis e venda seus serviços como freelancer',
-    description: 'Formação completa em Design Gráfico para quem quer se tornar profissional. Domine Photoshop, Illustrator, Figma, Canva Pro e After Effects básico. Aprenda criação de identidade visual, design de logos memoráveis, posts para redes sociais, materiais gráficos, mockups realistas e muito mais. Inclui 50+ projetos práticos, portfólio profissional pronto, certificado reconhecido e estratégias para conseguir seus primeiros clientes pagantes.',
-    youtubeVideoId: 'g01TRfAZTjk', // Video sobre design gráfico
-    imageUrl: 'https://images.unsplash.com/photo-1626785774625-ddcddc3445e9?auto=format&fit=crop&q=80&w=800',
+    title: '🎈 Master en Decoración con Globos',
+    shortDescription: 'Convierte tu tiempo libre en ingresos',
+    description: 'Convierte tu tiempo libre en ingresos. 3 niveles + certificación oficial. Aprende desde decoraciones básicas hasta arcos elaborados, columnas, centros de mesa y esculturas complejas. Incluye mentorías en vivo, acceso a grupo privado y certificación reconocida internacionalmente.',
+    youtubeVideoId: '3aLy0mAYUYo',
+    imageUrl: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&q=80&w=800',
     affiliateLink: 'https://go.hotmart.com/T101431344N?dp=1',
-    category: '🎨 Design & Criatividade',
+    category: '🎈 Decoración',
     highlights: [
-      '5 ferramentas profissionais',
-      '50+ projetos práticos',
-      'Portfólio completo incluído',
-      'Como captar primeiros clientes'
+      '3 niveles de aprendizaje',
+      'Certificación oficial',
+      'Mentorías en vivo',
+      'Grupo privado'
     ],
     badge: '⭐ POPULAR'
   },
   {
     id: '7',
-    title: '💻 Dev Full Stack: Programador Profissional em 6 Meses',
-    shortDescription: 'Torne-se desenvolvedor web e consiga trabalho remoto bem remunerado',
-    description: 'Formação completa e atualizada em Desenvolvimento Web Full Stack. Domine HTML5, CSS3, JavaScript ES6+, React.js, Next.js, Node.js, TypeScript, MongoDB, PostgreSQL, Git/GitHub, deploy na nuvem e muito mais. Aprenda com projetos reais do mercado, desde landing pages até sistemas complexos. Inclui 25+ projetos no portfólio, preparação para entrevistas técnicas, simulados de código, e acesso vitalício à comunidade de devs. Mais de 500 alunos empregados.',
-    youtubeVideoId: 'SV0R3nEwt0Q', // Video sobre programação web
-    imageUrl: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800',
+    title: '🧪 Moldes de Silicona Caseros',
+    shortDescription: 'Aprende a elaborar tus propios moldes desde casa',
+    description: 'Aprende a elaborar tus propios moldes desde casa. Ahorra dinero. Guía práctica completa que te enseña a crear moldes de silicona para cualquier proyecto: repostería, resina, velas, jabones y más. Incluye fórmulas, proveedores y técnicas para moldes de alta calidad.',
+    youtubeVideoId: 'OY8l4wcABMk',
+    imageUrl: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800',
     affiliateLink: 'https://go.hotmart.com/I101639218Q?dp=1',
-    category: '💻 Programação',
+    category: '🧪 DIY',
     highlights: [
-      '25+ projetos no portfólio',
-      'Stack moderna 2025 (React/Next/Node)',
-      'Preparação para entrevistas técnicas',
-      '+500 alunos empregados'
+      'Guía práctica completa',
+      'Ahorra en moldes',
+      'Fórmulas incluidas',
+      'Lista de proveedores'
     ],
-    badge: '🚀 EMPREGABILIDADE'
+    badge: '🚀 GUÍA PRÁCTICA'
   }
 ];
 

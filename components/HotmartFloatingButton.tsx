@@ -20,10 +20,10 @@ const HotmartFloatingButton: React.FC = () => {
 
   // Posición del botón
   const positionClasses = {
-    'bottom-right': 'bottom-6 right-6',
-    'bottom-left': 'bottom-6 left-6',
-    'top-right': 'top-24 right-6',
-    'top-left': 'top-24 left-6',
+    'bottom-right': 'bottom-4 right-4 sm:bottom-6 sm:right-6',
+    'bottom-left': 'bottom-4 left-4 sm:bottom-6 sm:left-6',
+    'top-right': 'top-24 right-4 sm:right-6',
+    'top-left': 'top-24 left-4 sm:left-6',
   };
 
   const position = positionClasses[HOTMART_CONFIG.floatingButtonPosition];

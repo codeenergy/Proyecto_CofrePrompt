@@ -11,9 +11,8 @@ import LegalModal from './components/LegalModal';
 import Toast, { ToastType } from './components/Toast';
 import LoadingSpinner from './components/LoadingSpinner';
 import SkeletonCard from './components/SkeletonCard';
-import MonetagAdsProvider from './components/MonetagAdsProvider';
-import MonetagDirectLink from './components/MonetagDirectLink';
 import HotmartFloatingButton from './components/HotmartFloatingButton';
+import SupportButton from './components/SupportButton';
 import { LanguageProvider } from './i18n/LanguageContext';
 import { Category, Platform, Prompt, User, Comment, Collection, Notification } from './types';
 import { MOCK_PROMPTS } from './constants';
@@ -342,8 +341,7 @@ function App() {
 
   return (
     <LanguageProvider>
-      <MonetagAdsProvider>
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
         <Navbar
         user={user}
         setUser={setUser}
@@ -403,9 +401,6 @@ function App() {
                   />
                 ))}
               </div>
-
-              {/* Monetag Direct Link - Solo en producción */}
-              <MonetagDirectLink className="mt-6" />
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -506,8 +501,10 @@ function App() {
 
         {/* Botón Flotante de Hotmart */}
         <HotmartFloatingButton />
-        </div>
-      </MonetagAdsProvider>
+
+        {/* Botón de Soporte */}
+        <SupportButton position="bottom-left" />
+      </div>
     </LanguageProvider>
   );
 }
