@@ -27,7 +27,7 @@ export default function SupportButton({
   };
 
   const handleClick = () => {
-    window.open('https://otieu.com/4/10325708', '_blank', 'noopener,noreferrer');
+    window.open('https://otieu.com/4/10363127', '_blank', 'noopener,noreferrer');
   };
 
   if (!isVisible) return null;
