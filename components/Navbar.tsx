@@ -100,7 +100,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
             {/* Support Button */}
             <button
-              onClick={() => window.open('https://otieu.com/4/10325708', '_blank', 'noopener,noreferrer')}
+              onClick={() => window.open('https://otieu.com/4/10367593', '_blank', 'noopener,noreferrer')}
               className="h-11 px-3 sm:px-4 flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 border border-green-500/50 hover:border-green-400/50 rounded-lg transition-all hover:scale-105 shadow-lg shadow-green-500/20"
               title="Soporte"
             >
