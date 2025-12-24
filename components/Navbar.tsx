@@ -3,7 +3,6 @@ import { User, Notification } from '../types';
 import { Search, Menu, LogOut, Plus, Globe, HelpCircle, Bell, X, Sun, Moon } from 'lucide-react';
 import { signInWithGoogle, logoutUser } from '../services/firebase';
 import { useLanguage } from '../i18n/LanguageContext';
-import { useTheme } from '../context/ThemeContext';
 
 interface NavbarProps {
   user: User | null;
@@ -33,9 +32,17 @@ const Navbar: React.FC<NavbarProps> = ({
   onClearNotification = () => {}
 }) => {
   const { language, setLanguage, t } = useLanguage();
-  const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Initialize theme
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const initialTheme = savedTheme || systemPreference;
+    setTheme(initialTheme);
+  }, []);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -53,6 +60,22 @@ const Navbar: React.FC<NavbarProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isMenuOpen]);
+
+  const applyTheme = (newTheme: 'light' | 'dark') => {
+    const root = document.documentElement;
+    if (newTheme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', newTheme);
+  };
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    applyTheme(newTheme);
+  };
 
   const handleLogin = async () => {
     try {
@@ -269,7 +292,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
                     {/* Theme Toggle */}
                     <button
-                      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                      onClick={toggleTheme}
                       className="w-full p-3 flex items-center gap-3 bg-slate-800 hover:bg-orange-500/20 border border-slate-700 hover:border-orange-500/50 rounded-lg transition-all group"
                     >
                       <div className="w-10 h-10 bg-orange-500/20 group-hover:bg-orange-500/30 rounded-lg flex items-center justify-center transition-colors">
