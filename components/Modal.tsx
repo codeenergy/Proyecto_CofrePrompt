@@ -18,6 +18,7 @@ interface ModalProps {
   onLikeComment?: (commentId: string) => void;
   onToggleFavorite?: (promptId: string) => void;
   onCopySuccess?: () => void;
+  onSelectRelatedPrompt?: (prompt: Prompt) => void;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -30,11 +31,18 @@ const Modal: React.FC<ModalProps> = ({
   onAddComment = () => {},
   onLikeComment = () => {},
   onToggleFavorite = () => {},
-  onCopySuccess = () => {}
+  onCopySuccess = () => {},
+  onSelectRelatedPrompt
 }) => {
   const [activeTab, setActiveTab] = useState<'content' | 'comments' | 'stats'>('content');
   const [showCollections, setShowCollections] = useState(false);
   const [copyCount, setCopyCount] = useState(0);
+
+  const handleSelectRelatedPrompt = (relatedPrompt: Prompt) => {
+    // Scroll to top when selecting a related prompt
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    onSelectRelatedPrompt?.(relatedPrompt);
+  };
 
   if (!prompt) return null;
 
@@ -234,7 +242,10 @@ const Modal: React.FC<ModalProps> = ({
                     <RelatedPrompts
                       currentPrompt={prompt}
                       allPrompts={allPrompts}
-                      onSelectPrompt={() => {}}
+                      onSelectPrompt={handleSelectRelatedPrompt}
+                      user={user}
+                      onLoginRequest={onLoginRequest}
+                      onCopySuccess={onCopySuccess}
                     />
                   </div>
                 )}

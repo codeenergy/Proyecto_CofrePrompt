@@ -32,43 +32,7 @@ import {
 type SortOption = 'DEFAULT' | 'LIKES' | 'NEWEST';
 type LegalView = 'PRIVACY' | 'TERMS' | 'COOKIES' | 'CONTACT';
 
-// Mock notifications para demostración
-const MOCK_NOTIFICATIONS: Notification[] = [
-  {
-    id: '1',
-    type: 'like',
-    userId: 'user1',
-    userName: 'María García',
-    userPhoto: 'https://ui-avatars.com/api/?name=Maria+Garcia&background=6366f1&color=fff',
-    promptId: '1',
-    promptTitle: 'Generador de Ideas Creativas',
-    message: 'le gustó tu prompt',
-    read: false,
-    createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString()
-  },
-  {
-    id: '2',
-    type: 'comment',
-    userId: 'user2',
-    userName: 'Carlos Ruiz',
-    userPhoto: 'https://ui-avatars.com/api/?name=Carlos+Ruiz&background=ec4899&color=fff',
-    promptId: '2',
-    promptTitle: 'Optimizador de Código',
-    message: 'comentó en tu prompt',
-    read: false,
-    createdAt: new Date(Date.now() - 15 * 60 * 1000).toISOString()
-  },
-  {
-    id: '3',
-    type: 'follow',
-    userId: 'user3',
-    userName: 'Ana López',
-    userPhoto: 'https://ui-avatars.com/api/?name=Ana+Lopez&background=10b981&color=fff',
-    message: 'comenzó a seguirte',
-    read: true,
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-  }
-];
+// Notifications will be loaded from Firebase
 
 interface ToastMessage {
   id: string;
@@ -82,7 +46,7 @@ function App() {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
-  const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoadingPrompts, setIsLoadingPrompts] = useState(true);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
@@ -413,6 +377,8 @@ function App() {
                     prompt={prompt}
                     onOpen={setSelectedPrompt}
                     onCopy={() => showToast('Prompt copiado al portapapeles', 'success')}
+                    user={user}
+                    onLoginRequest={handleLogin}
                   />
                 ))}
               </div>
@@ -503,6 +469,7 @@ function App() {
         onLikeComment={handleLikeComment}
         onToggleFavorite={handleToggleFavorite}
         onCopySuccess={() => showToast('Prompt copiado al portapapeles', 'success')}
+        onSelectRelatedPrompt={setSelectedPrompt}
       />
 
       <CreatePromptModal

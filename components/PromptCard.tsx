@@ -6,6 +6,8 @@ interface PromptCardProps {
   prompt: Prompt;
   onOpen: (prompt: Prompt) => void;
   onCopy?: () => void;
+  user?: any;
+  onLoginRequest?: () => void;
 }
 
 const PLATFORM_COLORS: Record<string, string> = {
@@ -16,11 +18,18 @@ const PLATFORM_COLORS: Record<string, string> = {
   'Gemini': 'from-blue-500 to-blue-600',
 };
 
-const PromptCard: React.FC<PromptCardProps> = ({ prompt, onOpen, onCopy }) => {
+const PromptCard: React.FC<PromptCardProps> = ({ prompt, onOpen, onCopy, user, onLoginRequest }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
+
+    // Require login to copy
+    if (!user) {
+      onLoginRequest?.();
+      return;
+    }
+
     try {
       await navigator.clipboard.writeText(prompt.content);
       setCopied(true);

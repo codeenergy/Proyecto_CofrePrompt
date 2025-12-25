@@ -8,13 +8,19 @@ interface RelatedPromptsProps {
   allPrompts: Prompt[];
   onSelectPrompt: (prompt: Prompt) => void;
   maxResults?: number;
+  user?: any;
+  onLoginRequest?: () => void;
+  onCopySuccess?: () => void;
 }
 
 export default function RelatedPrompts({
   currentPrompt,
   allPrompts,
   onSelectPrompt,
-  maxResults = 4
+  maxResults = 4,
+  user,
+  onLoginRequest,
+  onCopySuccess
 }: RelatedPromptsProps) {
   // Algorithm to find related prompts
   const getRelatedPrompts = (): Prompt[] => {
@@ -69,6 +75,9 @@ export default function RelatedPrompts({
             key={prompt.id}
             prompt={prompt}
             onOpen={onSelectPrompt}
+            user={user}
+            onLoginRequest={onLoginRequest}
+            onCopy={onCopySuccess}
           />
         ))}
       </div>
