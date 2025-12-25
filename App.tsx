@@ -90,6 +90,8 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState<Category>(Category.All);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | 'All'>('All');
   const [sortOption, setSortOption] = useState<SortOption>('DEFAULT');
+  const [currentPage, setCurrentPage] = useState(1);
+  const PROMPTS_PER_PAGE = 20;
 
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -166,6 +168,18 @@ function App() {
     }
     return result;
   }, [searchTerm, selectedCategory, selectedPlatform, prompts, sortOption]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredPrompts.length / PROMPTS_PER_PAGE);
+  const paginatedPrompts = useMemo(() => {
+    const startIndex = (currentPage - 1) * PROMPTS_PER_PAGE;
+    return filteredPrompts.slice(startIndex, startIndex + PROMPTS_PER_PAGE);
+  }, [filteredPrompts, currentPage]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory, selectedPlatform, sortOption]);
 
   const handleLogin = async () => {
     try {
@@ -364,6 +378,7 @@ function App() {
           onSelectCategory={(c) => { setSelectedCategory(c); setSortOption('DEFAULT'); }}
           selectedPlatform={selectedPlatform}
           onSelectPlatform={setSelectedPlatform}
+          prompts={prompts}
         />
 
         <main className="flex-1 min-w-0 p-3 sm:p-4 lg:p-5">
@@ -392,7 +407,7 @@ function App() {
           ) : filteredPrompts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
-                {filteredPrompts.map((prompt) => (
+                {paginatedPrompts.map((prompt) => (
                   <PromptCard
                     key={prompt.id}
                     prompt={prompt}
@@ -401,6 +416,56 @@ function App() {
                   />
                 ))}
               </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="mt-8 flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-800/50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors border border-slate-700"
+                  >
+                    Anterior
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNumber;
+                      if (totalPages <= 5) {
+                        pageNumber = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNumber = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNumber = totalPages - 4 + i;
+                      } else {
+                        pageNumber = currentPage - 2 + i;
+                      }
+
+                      return (
+                        <button
+                          key={pageNumber}
+                          onClick={() => setCurrentPage(pageNumber)}
+                          className={`w-10 h-10 rounded-lg text-sm font-bold transition-all ${
+                            currentPage === pageNumber
+                              ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
+                              : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                          }`}
+                        >
+                          {pageNumber}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-800/50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors border border-slate-700"
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              )}
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-center">

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Category, Platform } from '../types';
+import React, { useMemo } from 'react';
+import { Category, Platform, Prompt } from '../types';
 import { LayoutGrid, Code, Palette, Megaphone, PenTool, Briefcase, Sparkles, X, TrendingUp, Users, Star } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -10,6 +10,7 @@ interface SidebarProps {
   onSelectCategory: (c: Category) => void;
   selectedPlatform: Platform | 'All';
   onSelectPlatform: (p: Platform | 'All') => void;
+  prompts: Prompt[];
 }
 
 const CATEGORY_ICONS: Record<Category, React.ReactNode> = {
@@ -32,9 +33,37 @@ const PLATFORM_COLORS: Record<string, { bg: string; text: string; border: string
 };
 
 const Sidebar: React.FC<SidebarProps> = ({
-  isOpen, closeMobile, selectedCategory, onSelectCategory, selectedPlatform, onSelectPlatform
+  isOpen, closeMobile, selectedCategory, onSelectCategory, selectedPlatform, onSelectPlatform, prompts
 }) => {
   const { t } = useLanguage();
+
+  // Calculate real statistics
+  const stats = useMemo(() => {
+    const totalPrompts = prompts.length;
+    const totalViews = prompts.reduce((sum, p) => sum + (p.views || 0), 0);
+
+    // Get prompts from last week
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const newPromptsThisWeek = prompts.filter(p => new Date(p.createdAt) > oneWeekAgo).length;
+
+    // Get most popular category
+    const categoryCounts: Record<string, number> = {};
+    prompts.forEach(p => {
+      if (p.category !== Category.All) {
+        categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
+      }
+    });
+    const mostPopularCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0];
+
+    return {
+      totalPrompts,
+      totalViews,
+      newPromptsThisWeek,
+      mostPopularCategory: mostPopularCategory ? mostPopularCategory[0] : 'Coding',
+      mostPopularCount: mostPopularCategory ? mostPopularCategory[1] : 0
+    };
+  }, [prompts]);
 
   return (
     <>
@@ -59,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <X size={18} />
         </button>
 
-        <div className="h-full overflow-y-auto p-4 space-y-6">
+        <div className="h-full overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-orange-500/50 scrollbar-track-slate-800/30 hover:scrollbar-thumb-orange-500/70">
 
           {/* Categories Section */}
           <div>
@@ -133,23 +162,23 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <p className="text-xs text-orange-300 font-semibold uppercase tracking-wide">Total Prompts</p>
                 <Star size={14} className="text-orange-400" />
               </div>
-              <p className="text-2xl font-black text-white mb-1">1,248</p>
+              <p className="text-2xl font-black text-white mb-1">{stats.totalPrompts.toLocaleString()}</p>
               <div className="flex items-center gap-1.5 text-xs">
-                <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-semibold">+23</span>
+                <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-semibold">+{stats.newPromptsThisWeek}</span>
                 <span className="text-slate-400">{t.sidebar.thisWeek}</span>
               </div>
             </div>
 
-            {/* Active Users */}
+            {/* Total Views */}
             <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-lg p-4">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-xs text-blue-300 font-semibold uppercase tracking-wide">Usuarios Activos</p>
+                <p className="text-xs text-blue-300 font-semibold uppercase tracking-wide">Total Vistas</p>
                 <Users size={14} className="text-blue-400" />
               </div>
-              <p className="text-2xl font-black text-white mb-1">8,542</p>
+              <p className="text-2xl font-black text-white mb-1">{stats.totalViews.toLocaleString()}</p>
               <div className="flex items-center gap-1.5 text-xs">
-                <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-semibold">+12%</span>
-                <span className="text-slate-400">este mes</span>
+                <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 rounded font-semibold">{prompts.length > 0 ? Math.round(stats.totalViews / prompts.length) : 0}</span>
+                <span className="text-slate-400">promedio</span>
               </div>
             </div>
 
@@ -159,9 +188,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <p className="text-xs text-purple-300 font-semibold uppercase tracking-wide">Más Popular</p>
                 <TrendingUp size={14} className="text-purple-400" />
               </div>
-              <p className="text-lg font-black text-white mb-1">Coding</p>
+              <p className="text-lg font-black text-white mb-1">{stats.mostPopularCategory}</p>
               <div className="flex items-center gap-1.5 text-xs">
-                <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded font-semibold">2,456</span>
+                <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded font-semibold">{stats.mostPopularCount}</span>
                 <span className="text-slate-400">prompts</span>
               </div>
             </div>
