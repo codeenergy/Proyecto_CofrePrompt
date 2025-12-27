@@ -546,6 +546,7 @@ function App() {
         <UserProfile
           user={user}
           prompts={prompts}
+          collections={collections}
           isOwnProfile={true}
           onClose={() => setShowUserProfile(false)}
           onOpenPrompt={setSelectedPrompt}

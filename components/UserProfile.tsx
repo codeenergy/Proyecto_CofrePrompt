@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { X, Heart, BookMarked, Users, Edit2, Trash2, Eye, FolderPlus } from 'lucide-react';
-import { User, Prompt } from '../types';
+import { User, Prompt, Collection } from '../types';
 import PromptCard from './PromptCard';
 
 interface UserProfileProps {
   user: User;
   prompts: Prompt[];
+  collections: Collection[];
   isOwnProfile: boolean;
   onClose: () => void;
   onEditProfile?: () => void;
@@ -19,6 +20,7 @@ interface UserProfileProps {
 export default function UserProfile({
   user,
   prompts,
+  collections,
   isOwnProfile,
   onClose,
   onEditProfile,
@@ -288,8 +290,8 @@ export default function UserProfile({
                 </button>
               )}
 
-              {user.collections && user.collections.length > 0 ? (
-                user.collections.map((collection) => (
+              {collections && collections.length > 0 ? (
+                collections.map((collection) => (
                   <div
                     key={collection.id}
                     className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 hover:border-indigo-500/50 transition-colors cursor-pointer"
