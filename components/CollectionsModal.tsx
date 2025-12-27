@@ -32,12 +32,16 @@ export default function CollectionsModal({
 
   const userCollections = collections.filter(c => c.userId === user.uid);
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!newName.trim()) return;
-    onCreateCollection(newName.trim(), newDescription.trim(), isPublic);
+    await onCreateCollection(newName.trim(), newDescription.trim(), isPublic);
     setNewName('');
     setNewDescription('');
     setIsCreating(false);
+    // Cerrar modal automáticamente después de crear
+    if (!promptId) {
+      onClose();
+    }
   };
 
   const handleTogglePrompt = (collectionId: string) => {

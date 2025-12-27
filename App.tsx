@@ -31,7 +31,8 @@ import {
   getUserCollections,
   createCollection,
   addPromptToCollection,
-  removePromptFromCollection
+  removePromptFromCollection,
+  deleteCollection
 } from './services/firebase';
 
 type SortOption = 'DEFAULT' | 'LIKES' | 'NEWEST';
@@ -373,6 +374,21 @@ function App() {
     }
   };
 
+  const handleDeleteCollection = async (collectionId: string) => {
+    if (!user) return;
+
+    try {
+      showToast('Eliminando colección...', 'info');
+      await deleteCollection(collectionId);
+      const userCollections = await getUserCollections(user.uid);
+      setCollections(userCollections);
+      showToast('Colección eliminada exitosamente', 'success');
+    } catch (error) {
+      console.error('Error al eliminar colección:', error);
+      showToast('Error al eliminar colección', 'error');
+    }
+  };
+
   return (
     <LanguageProvider>
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
@@ -559,6 +575,7 @@ function App() {
             setShowUserProfile(false);
           }}
           onDeletePrompt={handleDeletePrompt}
+          onDeleteCollection={handleDeleteCollection}
           onOpenCollections={() => {
             setShowUserProfile(false);
             setIsCollectionsModalOpen(true);

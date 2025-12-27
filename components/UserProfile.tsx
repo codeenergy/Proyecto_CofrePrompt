@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Heart, BookMarked, Users, Edit2, Trash2, Eye, FolderPlus } from 'lucide-react';
+import { X, Heart, BookMarked, Users, Edit2, Trash2, Eye, FolderPlus, Globe, Lock } from 'lucide-react';
 import { User, Prompt, Collection } from '../types';
 import PromptCard from './PromptCard';
 
@@ -15,6 +15,7 @@ interface UserProfileProps {
   onEditPrompt?: (prompt: Prompt) => void;
   onDeletePrompt?: (promptId: string) => void;
   onOpenCollections?: () => void;
+  onDeleteCollection?: (collectionId: string) => void;
 }
 
 export default function UserProfile({
@@ -28,10 +29,12 @@ export default function UserProfile({
   onOpenPrompt,
   onEditPrompt,
   onDeletePrompt,
-  onOpenCollections
+  onOpenCollections,
+  onDeleteCollection
 }: UserProfileProps) {
   const [activeTab, setActiveTab] = useState<'prompts' | 'favorites' | 'collections'>('prompts');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [confirmDeleteCollection, setConfirmDeleteCollection] = useState<string | null>(null);
 
   const userPrompts = prompts.filter(p => p.authorId === user.uid);
   const favoritePrompts = prompts.filter(p => user.favoritePrompts?.includes(p.id));
@@ -294,18 +297,63 @@ export default function UserProfile({
                 collections.map((collection) => (
                   <div
                     key={collection.id}
-                    className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 hover:border-indigo-500/50 transition-colors cursor-pointer"
+                    className="group relative bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm border-2 border-slate-700/50 rounded-xl p-5 hover:border-blue-500/50 transition-all hover:shadow-lg hover:shadow-blue-500/20 hover:scale-[1.02]"
                   >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-medium text-white">{collection.name}</h3>
-                        <p className="text-sm text-slate-400 mt-1">{collection.description}</p>
-                        <div className="flex items-center gap-2 mt-2 text-xs text-slate-500">
-                          <span>{collection.promptIds.length} prompts</span>
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="relative flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="font-bold text-white truncate">{collection.name}</h3>
+                          {collection.isPublic ? (
+                            <Globe className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                          ) : (
+                            <Lock className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                          )}
+                        </div>
+                        {collection.description && (
+                          <p className="text-sm text-slate-400 mt-1 line-clamp-2">{collection.description}</p>
+                        )}
+                        <div className="flex items-center gap-2 mt-3 text-xs text-slate-500">
+                          <span className="flex items-center gap-1">
+                            <BookMarked className="w-3 h-3" />
+                            {collection.promptIds.length} prompts
+                          </span>
                           <span>•</span>
                           <span>{collection.isPublic ? 'Pública' : 'Privada'}</span>
                         </div>
                       </div>
+
+                      {isOwnProfile && (
+                        <div className="flex items-center gap-2 ml-4">
+                          {confirmDeleteCollection === collection.id ? (
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => {
+                                  onDeleteCollection?.(collection.id);
+                                  setConfirmDeleteCollection(null);
+                                }}
+                                className="px-3 py-1 text-xs bg-red-500 hover:bg-red-600 text-white rounded transition-colors font-medium"
+                              >
+                                Confirmar
+                              </button>
+                              <button
+                                onClick={() => setConfirmDeleteCollection(null)}
+                                className="px-3 py-1 text-xs bg-slate-600 hover:bg-slate-500 text-white rounded transition-colors"
+                              >
+                                Cancelar
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setConfirmDeleteCollection(collection.id)}
+                              className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-lg transition-colors"
+                              title="Eliminar colección"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))
