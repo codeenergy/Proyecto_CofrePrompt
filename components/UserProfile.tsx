@@ -79,8 +79,9 @@ export default function UserProfile({
                 />
               </div>
               <div className="flex-1 pb-2">
-                <h2 className="text-3xl font-black bg-gradient-to-r from-orange-400 via-pink-400 to-blue-400 bg-clip-text text-transparent animate-shimmer">{user.displayName}</h2>
+                <h2 className="text-3xl font-black text-white drop-shadow-lg">{user.displayName}</h2>
                 {user.bio && <p className="text-sm text-slate-300 mt-2 font-medium">{user.bio}</p>}
+                {!user.bio && <p className="text-sm text-slate-400 mt-2 font-medium italic">Sin biografía</p>}
               </div>
               {isOwnProfile ? (
                 <button
@@ -102,39 +103,39 @@ export default function UserProfile({
 
             {/* Stats Modernos */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mt-6">
-              <div className="group relative bg-gradient-to-br from-orange-500/10 to-orange-600/10 backdrop-blur-sm border border-orange-500/30 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="group relative bg-gradient-to-br from-orange-500/20 to-orange-600/20 backdrop-blur-sm border border-orange-500/40 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-500/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative text-center">
-                  <div className="text-2xl font-black bg-gradient-to-r from-orange-400 to-orange-300 bg-clip-text text-transparent">{userPrompts.length}</div>
-                  <div className="text-xs text-orange-300/80 font-semibold mt-0.5">Prompts</div>
+                  <div className="text-2xl font-black text-orange-400 drop-shadow-lg">{userPrompts.length}</div>
+                  <div className="text-xs text-orange-300 font-semibold mt-0.5">Prompts</div>
                 </div>
               </div>
-              <div className="group relative bg-gradient-to-br from-pink-500/10 to-pink-600/10 backdrop-blur-sm border border-pink-500/30 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-br from-pink-500/0 to-pink-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="group relative bg-gradient-to-br from-pink-500/20 to-pink-600/20 backdrop-blur-sm border border-pink-500/40 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-pink-500/0 to-pink-500/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative text-center">
-                  <div className="text-2xl font-black bg-gradient-to-r from-pink-400 to-pink-300 bg-clip-text text-transparent">{totalLikes}</div>
-                  <div className="text-xs text-pink-300/80 font-semibold mt-0.5">Likes</div>
+                  <div className="text-2xl font-black text-pink-400 drop-shadow-lg">{totalLikes}</div>
+                  <div className="text-xs text-pink-300 font-semibold mt-0.5">Likes</div>
                 </div>
               </div>
-              <div className="group relative bg-gradient-to-br from-purple-500/10 to-purple-600/10 backdrop-blur-sm border border-purple-500/30 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="group relative bg-gradient-to-br from-purple-500/20 to-purple-600/20 backdrop-blur-sm border border-purple-500/40 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative text-center">
-                  <div className="text-2xl font-black bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent">{totalViews}</div>
-                  <div className="text-xs text-purple-300/80 font-semibold mt-0.5">Vistas</div>
+                  <div className="text-2xl font-black text-purple-400 drop-shadow-lg">{totalViews}</div>
+                  <div className="text-xs text-purple-300 font-semibold mt-0.5">Vistas</div>
                 </div>
               </div>
-              <div className="group relative bg-gradient-to-br from-blue-500/10 to-blue-600/10 backdrop-blur-sm border border-blue-500/30 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="group relative bg-gradient-to-br from-blue-500/20 to-blue-600/20 backdrop-blur-sm border border-blue-500/40 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative text-center">
-                  <div className="text-2xl font-black bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent">{user.followers?.length || 0}</div>
-                  <div className="text-xs text-blue-300/80 font-semibold mt-0.5">Seguidores</div>
+                  <div className="text-2xl font-black text-blue-400 drop-shadow-lg">{user.followers?.length || 0}</div>
+                  <div className="text-xs text-blue-300 font-semibold mt-0.5">Seguidores</div>
                 </div>
               </div>
-              <div className="group relative bg-gradient-to-br from-cyan-500/10 to-cyan-600/10 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="group relative bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 backdrop-blur-sm border border-cyan-500/40 rounded-xl p-3 hover:scale-105 transition-transform cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative text-center">
-                  <div className="text-2xl font-black bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">{user.following?.length || 0}</div>
-                  <div className="text-xs text-cyan-300/80 font-semibold mt-0.5">Siguiendo</div>
+                  <div className="text-2xl font-black text-cyan-400 drop-shadow-lg">{user.following?.length || 0}</div>
+                  <div className="text-xs text-cyan-300 font-semibold mt-0.5">Siguiendo</div>
                 </div>
               </div>
             </div>
