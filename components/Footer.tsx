@@ -95,7 +95,16 @@ const Footer: React.FC<FooterProps> = ({ onOpenLegal, onPresetFilter }) => {
         {/* Línea decorativa con gradiente */}
         <div className="mt-6 pt-4 border-t border-orange-500/10">
           <p className="text-center text-xs text-slate-500">
-            {t.footer.madeWith} <span className="text-red-500 animate-pulse">❤️</span> {t.footer.forDevelopers}
+            Made by{' '}
+            <a
+              href="https://codeenergy.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-orange-400 hover:text-orange-300 font-bold transition-colors hover:underline"
+            >
+              Code Energy
+            </a>
+            {' '}for All Users AI Future
           </p>
         </div>
       </div>

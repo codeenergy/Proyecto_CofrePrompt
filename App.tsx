@@ -8,6 +8,7 @@ import EditProfileModal from './components/EditProfileModal';
 import UserProfile from './components/UserProfile';
 import Footer from './components/Footer';
 import LegalModal from './components/LegalModal';
+import CollectionsModal from './components/CollectionsModal';
 import Toast, { ToastType } from './components/Toast';
 import LoadingSpinner from './components/LoadingSpinner';
 import SkeletonCard from './components/SkeletonCard';
@@ -26,7 +27,11 @@ import {
   getUserData,
   saveUserData,
   addToFavorites,
-  removeFromFavorites
+  removeFromFavorites,
+  getUserCollections,
+  createCollection,
+  addPromptToCollection,
+  removePromptFromCollection
 } from './services/firebase';
 
 type SortOption = 'DEFAULT' | 'LIKES' | 'NEWEST';
@@ -63,6 +68,8 @@ function App() {
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [legalModalView, setLegalModalView] = useState<LegalView | null>(null);
+  const [isCollectionsModalOpen, setIsCollectionsModalOpen] = useState(false);
+  const [selectedPromptForCollection, setSelectedPromptForCollection] = useState<string | undefined>(undefined);
 
   // Escuchar cambios en la autenticación para mantener sesión
   useEffect(() => {
@@ -70,6 +77,11 @@ function App() {
       if (authUser) {
         // Cargar datos adicionales del usuario desde Firebase
         const userData = await getUserData(authUser.uid);
+
+        // Cargar colecciones del usuario
+        const userCollections = await getUserCollections(authUser.uid);
+        setCollections(userCollections);
+
         if (userData) {
           setUser({ ...authUser, ...userData });
         } else {
@@ -77,6 +89,7 @@ function App() {
         }
       } else {
         setUser(null);
+        setCollections([]);
       }
     });
     return () => unsubscribe();
@@ -317,6 +330,49 @@ function App() {
     }
   };
 
+  const handleCreateCollection = async (name: string, description: string, isPublic: boolean) => {
+    if (!user) return;
+
+    try {
+      showToast('Creando colección...', 'info');
+      await createCollection(user.uid, name, description, isPublic);
+      const userCollections = await getUserCollections(user.uid);
+      setCollections(userCollections);
+      showToast('Colección creada exitosamente', 'success');
+    } catch (error) {
+      console.error('Error al crear colección:', error);
+      showToast('Error al crear colección', 'error');
+    }
+  };
+
+  const handleAddToCollection = async (collectionId: string, promptId: string) => {
+    if (!user) return;
+
+    try {
+      await addPromptToCollection(collectionId, promptId);
+      const userCollections = await getUserCollections(user.uid);
+      setCollections(userCollections);
+      showToast('Prompt agregado a la colección', 'success');
+    } catch (error) {
+      console.error('Error al agregar a colección:', error);
+      showToast('Error al agregar a colección', 'error');
+    }
+  };
+
+  const handleRemoveFromCollection = async (collectionId: string, promptId: string) => {
+    if (!user) return;
+
+    try {
+      await removePromptFromCollection(collectionId, promptId);
+      const userCollections = await getUserCollections(user.uid);
+      setCollections(userCollections);
+      showToast('Prompt eliminado de la colección', 'success');
+    } catch (error) {
+      console.error('Error al eliminar de colección:', error);
+      showToast('Error al eliminar de colección', 'error');
+    }
+  };
+
   return (
     <LanguageProvider>
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
@@ -502,6 +558,10 @@ function App() {
             setShowUserProfile(false);
           }}
           onDeletePrompt={handleDeletePrompt}
+          onOpenCollections={() => {
+            setShowUserProfile(false);
+            setIsCollectionsModalOpen(true);
+          }}
         />
       )}
 
@@ -517,6 +577,20 @@ function App() {
       <LegalModal
         view={legalModalView}
         onClose={() => setLegalModalView(null)}
+      />
+
+      <CollectionsModal
+        isOpen={isCollectionsModalOpen}
+        onClose={() => {
+          setIsCollectionsModalOpen(false);
+          setSelectedPromptForCollection(undefined);
+        }}
+        user={user}
+        promptId={selectedPromptForCollection}
+        collections={collections}
+        onCreateCollection={handleCreateCollection}
+        onAddToCollection={handleAddToCollection}
+        onRemoveFromCollection={handleRemoveFromCollection}
       />
 
         {/* Toast Notifications */}

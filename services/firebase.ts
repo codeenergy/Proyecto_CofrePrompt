@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, doc, updateDoc, deleteDoc, setDoc, getDoc, Timestamp } from "firebase/firestore";
-import { User, Prompt } from "../types";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, doc, updateDoc, deleteDoc, setDoc, getDoc, Timestamp, arrayUnion, arrayRemove } from "firebase/firestore";
+import { User, Prompt, Collection } from "../types";
 
 // Configuración de Firebase desde variables de entorno
 const firebaseConfig = {
@@ -261,6 +261,102 @@ export const removeFromFavorites = async (userId: string, promptId: string) => {
     return true;
   } catch (e) {
     console.error("Error eliminando de favoritos: ", e);
+    throw e;
+  }
+};
+
+// --- GESTIÓN DE COLECCIONES ---
+
+// Crear una nueva colección
+export const createCollection = async (userId: string, name: string, description: string, isPublic: boolean): Promise<string> => {
+  try {
+    const collectionData = {
+      userId,
+      name,
+      description,
+      isPublic,
+      promptIds: [],
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now()
+    };
+    const docRef = await addDoc(collection(db, "collections"), collectionData);
+    console.log("Colección creada con ID: ", docRef.id);
+    return docRef.id;
+  } catch (e) {
+    console.error("Error creando colección: ", e);
+    throw e;
+  }
+};
+
+// Obtener colecciones de un usuario
+export const getUserCollections = async (userId: string): Promise<Collection[]> => {
+  try {
+    const q = query(
+      collection(db, "collections"),
+      where("userId", "==", userId),
+      orderBy("updatedAt", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+
+    const collections: Collection[] = [];
+    querySnapshot.forEach((docSnapshot) => {
+      const data = docSnapshot.data();
+      collections.push({
+        id: docSnapshot.id,
+        ...data,
+        createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+        updatedAt: data.updatedAt?.toDate?.()?.toISOString() || new Date().toISOString()
+      } as Collection);
+    });
+
+    return collections;
+  } catch (e) {
+    console.error("Error obteniendo colecciones: ", e);
+    return [];
+  }
+};
+
+// Agregar prompt a colección
+export const addPromptToCollection = async (collectionId: string, promptId: string) => {
+  try {
+    const collectionRef = doc(db, "collections", collectionId);
+    await updateDoc(collectionRef, {
+      promptIds: arrayUnion(promptId),
+      updatedAt: Timestamp.now()
+    });
+    console.log("Prompt agregado a colección");
+    return true;
+  } catch (e) {
+    console.error("Error agregando prompt a colección: ", e);
+    throw e;
+  }
+};
+
+// Eliminar prompt de colección
+export const removePromptFromCollection = async (collectionId: string, promptId: string) => {
+  try {
+    const collectionRef = doc(db, "collections", collectionId);
+    await updateDoc(collectionRef, {
+      promptIds: arrayRemove(promptId),
+      updatedAt: Timestamp.now()
+    });
+    console.log("Prompt eliminado de colección");
+    return true;
+  } catch (e) {
+    console.error("Error eliminando prompt de colección: ", e);
+    throw e;
+  }
+};
+
+// Eliminar una colección
+export const deleteCollection = async (collectionId: string) => {
+  try {
+    const collectionRef = doc(db, "collections", collectionId);
+    await deleteDoc(collectionRef);
+    console.log("Colección eliminada con ID: ", collectionId);
+    return true;
+  } catch (e) {
+    console.error("Error eliminando colección: ", e);
     throw e;
   }
 };

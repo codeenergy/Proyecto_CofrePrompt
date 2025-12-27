@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Heart, BookMarked, Users, Edit2, Trash2, Eye } from 'lucide-react';
+import { X, Heart, BookMarked, Users, Edit2, Trash2, Eye, FolderPlus } from 'lucide-react';
 import { User, Prompt } from '../types';
 import PromptCard from './PromptCard';
 
@@ -13,6 +13,7 @@ interface UserProfileProps {
   onOpenPrompt?: (prompt: Prompt) => void;
   onEditPrompt?: (prompt: Prompt) => void;
   onDeletePrompt?: (promptId: string) => void;
+  onOpenCollections?: () => void;
 }
 
 export default function UserProfile({
@@ -24,7 +25,8 @@ export default function UserProfile({
   onFollowToggle,
   onOpenPrompt,
   onEditPrompt,
-  onDeletePrompt
+  onDeletePrompt,
+  onOpenCollections
 }: UserProfileProps) {
   const [activeTab, setActiveTab] = useState<'prompts' | 'favorites' | 'collections'>('prompts');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
@@ -275,6 +277,16 @@ export default function UserProfile({
 
           {activeTab === 'collections' && (
             <div className="space-y-3">
+              {isOwnProfile && (
+                <button
+                  onClick={onOpenCollections}
+                  className="w-full flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 border border-blue-500/50 rounded-xl transition-all text-white font-bold shadow-lg hover:shadow-blue-500/50 hover:scale-105"
+                >
+                  <FolderPlus className="w-5 h-5" />
+                  Nueva Colección
+                </button>
+              )}
+
               {user.collections && user.collections.length > 0 ? (
                 user.collections.map((collection) => (
                   <div
